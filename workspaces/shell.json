@@ -1,0 +1,12 @@
+{
+  "id": "shell",
+  "title": "DesktopAssembly（桌面外壳）",
+  "status": "planned",
+  "repo": "DesktopAssembly",
+  "entry": "AGENTS.md",
+  "paths": ["src"],
+  "readOnlyPaths": [],
+  "build": "dotnet build SDemo.Shell.slnf -c Release",
+  "test": "dotnet test tests -c Release",
+  "deny": ["obj", "bin", "TestResults"]
+}

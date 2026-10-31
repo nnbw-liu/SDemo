@@ -1,0 +1,20 @@
+[submodule "DesktopAgent"]
+	path = DesktopAgent
+	url = git@github.com:nnbw-liu/SDemo.DesktopAgent.git
+	branch = master
+[submodule "DesktopAssembly"]
+	path = DesktopAssembly
+	url = git@github.com:nnbw-liu/SDemo.DesktopAssembly.git
+	branch = master
+[submodule "Apps/Planner"]
+	path = Apps/Planner
+	url = git@github.com:nnbw-liu/SDemo.Apps.Planner.git
+	branch = master
+[submodule "Apps/Kb"]
+	path = Apps/Kb
+	url = git@github.com:nnbw-liu/SDemo.Apps.Kb.git
+	branch = master
+[submodule "Apps/Meeting"]
+	path = Apps/Meeting
+	url = git@github.com:nnbw-liu/SDemo.Apps.Meeting.git
+	branch = master

@@ -1,0 +1,12 @@
+{
+  "id": "meeting",
+  "title": "sdemo.meeting（会议）",
+  "status": "planned",
+  "repo": "Apps/Meeting",
+  "entry": "AGENTS.md",
+  "paths": ["src", "tests"],
+  "readOnlyPaths": [],
+  "build": "dotnet build SDemo.Meeting.slnf -c Release",
+  "test": "dotnet test tests -c Release",
+  "deny": ["obj", "bin", "TestResults", "docs/requirements.md", "models"]
+}
