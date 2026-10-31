@@ -16,7 +16,7 @@ $root = Split-Path -Parent $PSScriptRoot
 $all = Get-ChildItem (Join-Path $root 'workspaces') -File -Filter *.json |
     ForEach-Object { Get-Content $_.FullName -Raw | ConvertFrom-Json }
 
-if ([string]::IsNullOrWhiteSpace($Id)) {
+if ([string]::IsNullOrWhiteSpace($Id) -or $Id -in @('list', 'all')) {
     $all |
         Sort-Object @{ Expression = { if ($_.status -eq 'planned') { 1 } else { 0 } } }, id |
         Select-Object id, status, repo, title, entry |
