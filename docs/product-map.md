@@ -12,7 +12,7 @@
 | --- | --- | --- | --- | --- | --- |
 | **DesktopAgent**（已有） | 子仓 [`DesktopAgent/`](../DesktopAgent) | `%APPDATA%\SDemo\DesktopAgent\` | [guide/projects](../DesktopAgent/docs/guide/projects.md) | — | 已交付 |
 | **DesktopAssembly** | 子仓 [`DesktopAssembly/`](../DesktopAssembly) | `%APPDATA%\SDemo\DesktopAssembly\`（仅 `apps\` `widgets.json` `settings.json`，**无业务数据**） | [desktop-shell](../DesktopAssembly/docs/desktop-shell.md) · [requirements](../DesktopAssembly/docs/requirements.md) · [widget-contract](contracts/widget-contract.md) · [host-protocol](contracts/host-protocol.md) | DA-01–11、DA-90–92 | P1 |
-| **sdemo.planner** | 子仓 [`Apps/Planner/`](../Apps/Planner) | `%APPDATA%\SDemo\Apps\sdemo.planner\`（`planner.db` + `exports\`） | [planner-design](../Apps/Planner/docs/planner-design.md) · [p2-verification](../Apps/Planner/docs/p2-verification.md) · [planner-mcp-surface](../Apps/Planner/docs/planner-mcp-surface.md) | PL-01–14 | P2 已实现 / P3·P5 待做 |
+| **sdemo.planner** | 子仓 [`Apps/Planner/`](../Apps/Planner) | `%APPDATA%\SDemo\Apps\sdemo.planner\`（`planner.db` + `exports\`） | [planner-design](../Apps/Planner/docs/planner-design.md) · [p2-verification](../Apps/Planner/docs/p2-verification.md) · [planner-mcp-surface](../Apps/Planner/docs/planner-mcp-surface.md) | PL-01–14 | P2 集成验收通过 / 收尾 |
 | **sdemo.kb** | 子仓 [`Apps/Kb/`](../Apps/Kb) | `%APPDATA%\SDemo\Apps\sdemo.kb\`（`kb.db`） | [kb-versioning](../Apps/Kb/docs/kb-versioning.md) · [requirements](../Apps/Kb/docs/requirements.md) | KB-01–13 | P4 |
 | **sdemo.meeting** | 子仓 [`Apps/Meeting/`](../Apps/Meeting) | `%APPDATA%\SDemo\Apps\sdemo.meeting\`（`meeting.db` + `meetings\{id}\audio\`） | [meeting-design](../Apps/Meeting/docs/meeting-design.md) · [requirements](../Apps/Meeting/docs/requirements.md) | MT-01–14 | P6 |
 | **共享层**（非产品） | 还没有独立仓；方案见 [shared.md](shared.md) | 无 | [repository-layout](repository-layout.md) §7 | — | M1 |
@@ -52,6 +52,8 @@
 ### sdemo.planner（P2）
 
 - **已实现（2026-11-01）**：五工程 + `SDemo.Planner.slnf`；`todo`/`event` 同库不同表、真实 EF migrations + FTS5；主窗口待办 CRUD、日/周/月日历与拖拽改期、回收站、草稿审阅、ICS 导出；13 个 `todo_*` MCP 工具 + 风险元数据 + 审计；桌面组件 ≤8 条。设计见 [planner-design](../Apps/Planner/docs/planner-design.md)，验证见 [p2-verification](../Apps/Planner/docs/p2-verification.md)。
+- **宿主联调（2026-11-01）**：装到 `%APPDATA%\SDemo\DesktopAssembly\apps` 后被宿主发现，sha256 通过、ensure 拉起、runtime + MCP 13 工具可用、组件由宿主显示、主窗口按需打开；`tools/accept-host.ps1` 可复跑。过程中修掉安装目录误用 LOCALAPPDATA 与组件 command 路由段数错误。
+- **验收收尾**：日历指针拖拽、组件键盘手感、ICS 导入外部日历 3 项人工确认未签字。
 - **已定**：软删 + 7 天回收站；高风险（删除/批量≥5/清空）不可关闭审批；ICS v1 只导出、不导出 RRULE；来源由 MCP 服务端注入。
 - **未做**：PL-06 只读订阅、PL-08 提醒、`calendar_*` 工具（P3/P5）；清单/标签管理 UI、事件跨天显示留后续迭代。
 
