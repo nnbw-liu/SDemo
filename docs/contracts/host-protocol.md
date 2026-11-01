@@ -73,6 +73,8 @@ Discovered → Validated → Launching → Handshaking → Ready ⇄ Idle → St
 
 > 应用可通过 `POST /v1/widgets/{id}/request { "kind": "idleHold", "value": true }` 声明「暂不空闲退出」；宿主只存内存标志，进程退出即清（见 [host-endpoints](../../DesktopAssembly/docs/host-endpoints.md) §6、DA-95）。
 
+**单实例接管（DA-22）**：拉起前先读该应用的 `runtime.json`。若 pid 仍存活、进程名与清单 `executable` 的文件名一致，就用文件里的 token 请求 `/v1/health` 与 `/v1/handshake`；通过则**直接接管**（不产生第二个进程），401 / 版本不符按 §11 处理。pid 已退出、或已被系统复用成其它进程时，删除残留 `runtime.json`（**不杀无关进程**），再走正常拉起；pid 存活但连接超时，则终止无法接管的残骸后重拉。
+
 启动顺序：宿主先显示**骨架态**（组件外框 + 图标 + 「正在启动」），进程就绪后再切换到真实窗口。绝不允许白窗或无提示的 1 秒空白。
 
 ## 4. 单实例与 `runtime.json`
@@ -80,7 +82,7 @@ Discovered → Validated → Launching → Handshaking → Ready ⇄ Idle → St
 应用启动后立即：
 
 1. 打开命名互斥量 `SDemo.App.<appId>`；已存在则**不新建窗口**，直接读既有 `runtime.json` 连上去；
-2. 绑定 `127.0.0.1:0`（系统分配端口），**不写死端口**；
+2. 绑定 `127.0.0.1:0`（系统分配端口，**不写死**）；若所用 HTTP 服务器不接受端口 0，可先探测空闲端口再绑定。
 3. 写 `%LOCALAPPDATA%\SDemo\DesktopAssembly\runtime\<appId>.json`，ACL 设为仅当前用户。
 
 ```json
@@ -96,7 +98,8 @@ Discovered → Validated → Launching → Handshaking → Ready ⇄ Idle → St
 
 - 宿主每隔 2s 轮询该文件（最长 `startupTimeoutMs`）；文件里的 `pid` 已退出时删除残留文件再重试。
 - **token 来源**：宿主拉起时通过环境变量 `SDEMO_APP_TOKEN` 传入（32 字节 base64url），应用写进 `runtime.json` 供宿主读回；用户自行双击启动时由应用生成。两种路径下 token 都**只在本机、只在本次进程存活期间有效**，重启即换。
-- 端口与 token 必须写在 `%LOCALAPPDATA%`：它们绑定本机进程，**不可随 `%APPDATA%` 漫游**。
+- **一致性校验**：宿主拉起下发的 token 必须原样写入 `runtime.json`；宿主读回时逐次比对，不一致视为 `HOST_TOKEN_INVALID`，**不重试**（防止旧实例或串线实例被误接管）。
+- 端口与 token 必须写在 `%LOCALAPPDATA%`：它们绑定本机进程，**不可随 `%APPDATA%` 漫游**；文件 ACL 依赖用户配置目录继承（仅当前用户），壳不额外改写 ACL。
 
 > 宿主自身的监听器、`host.json`、`client-token` 与 Agent 使用的 client 面端点，见 [host-endpoints.md](../../DesktopAssembly/docs/host-endpoints.md)；本节只定义每个应用的 `runtime.json`。
 
@@ -127,6 +130,26 @@ POST /v1/handshake
 | POST | `/v1/shutdown` | 优雅退出 `{ graceMs: 2000 }` |
 | POST | `/v1/widgets/{id}/command` | 宿主指令：`show` / `hide` / `focus` / `refresh` / `themeChanged` / `configChanged` |
 | GET | `/v1/widgets/{id}/state` | 组件状态（用于宿主显示占位与诊断） |
+
+`POST /v1/widgets/{id}/command` 的 body（C3：此前未定义，这里补全）：
+
+```json
+{
+  "command": "show",
+  "opacity": 0.92,
+  "theme": "dark",
+  "config": { "maxItems": 8 }
+}
+```
+
+| 字段 | 说明 |
+| --- | --- |
+| `command` | 必填，`show` / `hide` / `focus` / `refresh` / `themeChanged` / `configChanged`；未知指令 → 400 |
+| `opacity` | 可选，0–1；native 组件自绘透明度，宿主只传值（运行时由宿主按清单 `opacity.min` 夹紧） |
+| `theme` | 可选，`dark` / `light`；与 `themeChanged` 一起用 |
+| `config` | 可选，`widgets.json` 里该组件的 config 值快照；与 `configChanged` 一起用 |
+
+成功返回 200（body 可为空或 `{ "accepted": true }`）；宿主不读取应用返回值，只按状态码判断。
 
 ### 6.2 应用 → 宿主（`SDEMO_HOST_URL`）
 
@@ -162,7 +185,9 @@ POST /v1/handshake
 - `SetWindowsHookEx` 全局钩子、`SendMessage` 跨进程同步阻塞调用；
 - 接管应用的消息循环、替应用处理 `WM_DPICHANGED`。
 
-应用侧对应义务：**必须** PerMonitorV2 DPI 感知；**必须**自己处理拖动与位置变化并回写宿主（`widgets.json` 由宿主独占写入，应用只上报）。
+应用侧对应义务：**必须** PerMonitorV2 DPI 感知；自己处理拖动与尺寸约束（**不要**写入位置/层级/穿透策略），宿主用 `GetWindowRect` 回读矩形并独占写 `widgets.json`。
+
+**位置回写（v1）**：宿主每 250ms 读取已登记窗口的实际矩形，松手/停止变化 500ms 后把「monitorKey + DIP 矩形」落盘；v1 **不引入** app → host 的「上报位置」端点。需要更精确的双向回写时再走契约变更，不要私加隐式接口。
 
 ## 8. 位置、多屏与 DPI
 
@@ -174,6 +199,8 @@ POST /v1/handshake
 | 显示器变更 | 监听 `WM_DISPLAYCHANGE`，重新校验全部组件 |
 | 显示器拔插 | 消失的那块上的组件迁到主屏右下角，不叠在一起（按 `id` 排序错开 24px） |
 | 吸附 | 松手时距边 < `snapPx` 吸附；吸附值本身也持久化 |
+
+**混合 DPI 坐标口径（C8）**：v1 的 DIP 换算以「组件所在显示器的有效 DPI」为基准；跨屏拖动到不同缩放比例的显示器时，按**目标屏**的 DPI 重映射并重新落盘。混合 DPI 下跨多屏的全局绝对 DIP 精确往返不在 v1 承诺（验收覆盖单屏 100%/125%/150% 与同缩放多屏）。
 
 ## 9. 生命周期与退出顺序
 

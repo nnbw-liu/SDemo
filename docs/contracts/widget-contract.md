@@ -158,18 +158,20 @@
 | `opacity` | native：应用自绘透明度，宿主只传值；wasm：宿主设窗口不透明度 |
 | `hideBehindFullscreenApp` | 检测到前台是全屏窗口时降低 z-order 或隐藏，退出全屏后恢复 |
 
+**位置回写**：应用处理拖动与尺寸（不写位置策略）；宿主用 `GetWindowRect`（host-protocol §7 白名单第 2 项）轮询回读，防抖后按「monitorKey + DIP」落盘。v1 不新增 app → host 的位置上报端点。混合 DPI 的换算口径见 host-protocol §8。
+
 ## 7. 焦点与「不可最小化」
 
 `focus.stealOnShow = false`：宿主显示组件时用 `SWP_NOACTIVATE`，不会把你正在写的字切走。
 `focus.activateOnClick = true`：用户主动点击时正常激活，输入框能打字（**不要**图省事加 `WS_EX_NOACTIVATE`，那会导致组件里的输入框永远拿不到焦点）。
 
-「不可最小化」的落地组合（宿主负责，应用不用写）：
+「不可最小化」的落地组合（按 host-protocol §7 的跨进程边界拆职责）：
 
-- `ShowInTaskbar = false` + `WS_EX_TOOLWINDOW`：不进任务栏、不进 Alt+Tab；
-- 窗口无最小化按钮，且宿主拦截 `WM_SYSCOMMAND / SC_MINIMIZE`；
-- 位置与尺寸不随主窗口联动。
+- **宿主负责**：显示不抢焦点（`SW_SHOWNOACTIVATE` / `SWP_NOACTIVATE`）；用 `GWL_EXSTYLE` 保证 `WS_EX_TOOLWINDOW`（不进任务栏 / Alt+Tab）；位置、显隐、层级。
+- **应用负责**：自己的窗口**不提供最小化按钮**，并忽略 `WM_SYSCOMMAND / SC_MINIMIZE`；位置与尺寸不随主窗口联动。跨进程宿主**不能**挂窗口过程、也不能装全局钩子，因此契约**不得**把「拦截 `SC_MINIMIZE`」写成宿主职责。
+- **Win+D（显示桌面）**：2026-11-01 实测结论为 **A**——native 组件（tool window + `ShowInTaskbar=false` + 不激活显示）不会被 Win+D 收起，v1 不需要恢复策略；宿主仍保留「前台轮询状态机」兜底（不装钩子、不操作其它应用窗口），但不应把它当默认依赖。
 
-> ⚠️ Win+D（显示桌面）是否会折叠这类窗口需要**实测**。拦截 `SC_MINIMIZE` 是已知做法之一，但不保证覆盖所有输入路径；S1 里必须专门验证，验证前不要对用户承诺「永远可见」。
+> ⚠️ Win+D 行为依赖窗口样式与系统版本；换样式或平台要复测，不要对用户承诺「在所有输入路径下永远可见」。
 
 ## 8. `config`：设置表单的 Schema 子集
 
