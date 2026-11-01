@@ -8,7 +8,7 @@
 | 工作区 | 仓路径 | 状态 | 入口 | 门禁命令 |
 | --- | --- | --- | --- | --- |
 | `agent`（DesktopAgent） | `DesktopAgent/` | ✅ 已有 | `DesktopAgent/AGENTS.md` | `dotnet build SDemo.DesktopAgent.Wpf.slnf -c Release` |
-| `shell`（DesktopAssembly） | `DesktopAssembly/` | 🚧 规划 | `DesktopAssembly/AGENTS.md` | `dotnet build SDemo.Shell.slnf -c Release` |
+| `shell`（DesktopAssembly） | `DesktopAssembly/` | ✅ P1 已实现并验收 | `DesktopAssembly/AGENTS.md` | `dotnet build SDemo.Shell.slnf -c Release` |
 | `planner`（sdemo.planner） | `Apps/Planner/` | 🚧 规划 | `Apps/Planner/AGENTS.md` | `dotnet build SDemo.Planner.slnf -c Release` |
 | `kb`（sdemo.kb） | `Apps/Kb/` | 🚧 规划 | `Apps/Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
 | `meeting`（sdemo.meeting） | `Apps/Meeting/` | 🚧 规划 | `Apps/Meeting/AGENTS.md` | `dotnet build SDemo.Meeting.slnf -c Release` |
