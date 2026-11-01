@@ -154,7 +154,7 @@ v1 全部铺开后，模型能看到的工具会变成：
 | --- | --- | --- | --- | --- | --- |
 | **P0** | ✅ | 契约 | 四份架构文档（已完成） | 字段与错误码无歧义 | — |
 | **P1** | ✅ 已完成 | 宿主 MVP + spike | DesktopAssembly 最小可用 + Hello Widget | native 组件能显示/拖动/置顶/穿透/多屏还原；Win+D 行为实测出结论 | 5–7 |
-| **P2** | 🟡 验收收尾 | Planner v1 | `sdemo.planner`：todo + event + 主窗口 + 组件 + MCP | 手工 CRUD、日历视图、ICS 导出、MCP `todo_list/create/complete` 通 | 10–14 |
+| **P2** | ✅ 已验收 | Planner v1 | `sdemo.planner`：todo + event + 主窗口 + 组件 + MCP | 手工 CRUD、日历视图、ICS 导出、MCP `todo_list/create/complete` 通 | 10–14 |
 | **P3** | 未开始 | DesktopAgent 接入 | MCP client + 审批策略 + 派生卡片采纳 + 跨应用引用 | 聊天里能让 AI 建待办；删除弹确认；引用可跳转 | 5–7 |
 | **P4** | 未开始 | KB v1 | `sdemo.kb`：导入 + 索引 + `kb_*` MCP | 100 篇文档导入后关键词检索能命中；引用可跳回 | 10–14 |
 | **P5** | 未开始 | 单人多端同步 | outbox + 零服务器导入导出 | 两台机器合并后条目一致、冲突可见 | 3–5 |
@@ -165,11 +165,11 @@ v1 全部铺开后，模型能看到的工具会变成：
 
 > **进度快照（2026-11-01）**
 > - **P1 ✅**：DesktopAssembly 宿主 MVP + native 组件已按 [S1 验收](../DesktopAssembly/docs/s1-verification.md) 通过；Win+D 结论 A。
-> - **P2 🟡**：planner 五件套、13 个 `todo_*`、主窗口日历/回收站/草稿、组件与 ICS 导出已实现；
->   构建 0 警告、32 个测试、MCP 冒烟、宿主发现/ensure/组件/主窗口联调均通过
+> - **P2 ✅**：planner 五件套、13 个 `todo_*`、主窗口日历/回收站/草稿、组件与 ICS 导出已实现；
+>   构建 0 警告、34 个测试、MCP 冒烟、宿主发现/ensure/组件/主窗口联调、日历真实拖拽均通过；
+>   ICS 已实测导入 Outlook（待办默认 `VEVENT`，修复 VTODO 被忽略的问题）
 >   （见 [p2-verification](../Apps/Planner/docs/p2-verification.md)、[planner-design](../Apps/Planner/docs/planner-design.md)）。
->   **尚未签字**：ICS 导入外部日历 1 项（导出文件与结构已验证，样例在 `%TEMP%\sdemo-planner-export\acceptance.ics`）。
-> - **下一步**：完成 P2 收尾后进 **P3**（DesktopAgent MCP client + 审批 + 派生卡片）。
+> - **下一步**：进 **P3**（DesktopAgent MCP client + 审批 + 派生卡片）。
 
 工期里最容易低估的是 P2——todo+event+日历视图+ICS+组件+MCP，看着都是小东西，加起来比宿主还重。
 
