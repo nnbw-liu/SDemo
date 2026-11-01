@@ -1,7 +1,8 @@
 # 组件契约（`widget.json`）
 
-> 状态：S0 草案，已确认方向，未实现
+> 状态：已实现并验收（2026-11-01，P1 只做 native）
 > 关联：[总体架构](../../DesktopAssembly/docs/desktop-shell.md) · [宿主控制协议](host-protocol.md)
+> 配套 Schema：[widget.schema.json](../../DesktopAgent/contracts/schemas/widget.schema.json)
 > 适用范围：`sdemo.planner` 及后续所有要挂到桌面上的应用
 
 ---
