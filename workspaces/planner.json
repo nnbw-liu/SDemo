@@ -1,12 +1,12 @@
 {
   "id": "planner",
   "title": "sdemo.planner（待办 + 日历）",
-  "status": "planned",
+  "status": "active",
   "repo": "Apps/Planner",
   "entry": "AGENTS.md",
-  "paths": ["src", "tests"],
+  "paths": ["src", "tests", "deploy", "tools"],
   "readOnlyPaths": [],
   "build": "dotnet build SDemo.Planner.slnf -c Release",
-  "test": "dotnet test tests -c Release",
+  "test": "dotnet test tests/SDemo.Planner.Tests/SDemo.Planner.Tests.csproj -c Release",
   "deny": ["obj", "bin", "TestResults", "docs/requirements.md"]
 }
