@@ -168,7 +168,7 @@ v1 全部铺开后，模型能看到的工具会变成：
 > - **P2 🟡**：planner 五件套、13 个 `todo_*`、主窗口日历/回收站/草稿、组件与 ICS 导出已实现；
 >   构建 0 警告、32 个测试、MCP 冒烟、宿主发现/ensure/组件/主窗口联调均通过
 >   （见 [p2-verification](../Apps/Planner/docs/p2-verification.md)、[planner-design](../Apps/Planner/docs/planner-design.md)）。
->   **尚未签字**：日历指针拖拽手感、ICS 导入外部日历 2 项人工验收。
+>   **尚未签字**：ICS 导入外部日历 1 项（导出文件与结构已验证，样例在 `%TEMP%\sdemo-planner-export\acceptance.ics`）。
 > - **下一步**：完成 P2 收尾后进 **P3**（DesktopAgent MCP client + 审批 + 派生卡片）。
 
 工期里最容易低估的是 P2——todo+event+日历视图+ICS+组件+MCP，看着都是小东西，加起来比宿主还重。
