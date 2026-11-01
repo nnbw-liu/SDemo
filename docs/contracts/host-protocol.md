@@ -157,7 +157,7 @@ POST /v1/handshake
 | --- | --- | --- |
 | POST | `/v1/apps/{appId}/register` | native 组件上报窗口：`{ widgetId, hwnd, dpiAware: "per-monitor-v2" }` |
 | POST | `/v1/apps/{appId}/unregister` | 窗口销毁 |
-| POST | `/v1/notify` | 请求宿主弹通知 `{ title, body, level }` |
+| POST | `/v1/notify` | 请求宿主弹通知 `{ title, body, level }`；需清单声明 `notifications`，首次使用弹一次授权（DA-66） |
 | POST | `/v1/widgets/{id}/request` | 声明意图：`layer` / `alwaysOnTop` / `clickThrough` 的**切换请求**（宿主可拒绝） |
 | GET | `/v1/host/info` | 宿主版本、主题、强调色、语言、当前显示器集合 |
 
@@ -184,6 +184,10 @@ POST /v1/handshake
 - 改 `WS_CHILD` 等窗口本质样式；
 - `SetWindowsHookEx` 全局钩子、`SendMessage` 跨进程同步阻塞调用；
 - 接管应用的消息循环、替应用处理 `WM_DPICHANGED`。
+
+> **wasm 组件不在这条白名单的「跨进程」语义内**：窗口是宿主自己创建的（同进程），因此允许为自己的窗口设 `WS_EX_TOOLWINDOW`、`SetParent` 到桌面层、`MapWindowPoints` 换算子窗口坐标。
+> 桌面层触发 WorkerW 用的是 `SendMessageTimeout(Progman, 0x052C, …, 1s)`，超时版本，不构成阻塞调用。
+> Win11 若没有可用 WorkerW，宿主回退为「普通窗口 + `HWND_BOTTOM`」，不改父窗（见 widget-contract §6）。
 
 应用侧对应义务：**必须** PerMonitorV2 DPI 感知；自己处理拖动与尺寸约束（**不要**写入位置/层级/穿透策略），宿主用 `GetWindowRect` 回读矩形并独占写 `widgets.json`。
 

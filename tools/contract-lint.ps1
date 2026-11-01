@@ -164,11 +164,35 @@ function Test-AppPair([string]$appFile, [string]$widgetFile, [bool]$directoryNam
     }
 
     if ([string]$widget.renderer -eq 'wasm') {
-        Add-Warning $widgetFile 'wasm 组件在 v1 只禁用并提示（Q1）'
+        $appDirectory = Split-Path -Parent $appFile
+        $webRoot = [string]$widget.wasm.webRoot
+        if ([string]::IsNullOrWhiteSpace($webRoot)) { $webRoot = 'payload' }
+        $entry = [string]$widget.wasm.entry
+        if ([string]::IsNullOrWhiteSpace($entry)) { $entry = 'index.html' }
+        if ($webRoot -match '^[\\/]' -or $webRoot.Contains('..', [StringComparison]::Ordinal)) {
+            Add-Failure $widgetFile "wasm.webRoot 不接受绝对路径或 ..（当前 $webRoot）"
+        }
+        elseif ($entry -match '^[\\/]' -or $entry.Contains('..', [StringComparison]::Ordinal)) {
+            Add-Failure $widgetFile "wasm.entry 不接受绝对路径或 ..（当前 $entry）"
+        }
+        else {
+            $entryPath = Join-Path (Join-Path $appDirectory $webRoot) $entry
+            if (-not (Test-Path -LiteralPath $entryPath)) {
+                Add-Failure $widgetFile "wasm 载荷入口不存在：$entryPath（wasm 组件由宿主建窗加载，payload 必须随安装目录一起分发）"
+            }
+        }
     }
 
-    if ([string]$widget.layer -eq 'desktop') {
-        Add-Warning $widgetFile '桌面层在 v1 只禁用并提示（Q1）'
+    if ([string]$widget.config) {
+        $properties = $widget.config.properties
+        if ($null -ne $properties) {
+            foreach ($property in $properties.PSObject.Properties) {
+                $type = [string]$property.Value.type
+                if ($type -in @('object', 'array')) {
+                    Add-Failure $widgetFile "config.$($property.Name) 的类型 $type 不在宿主支持范围内（boolean/integer/number/string）"
+                }
+            }
+        }
     }
 
     $hostApiVersion = '1.0'

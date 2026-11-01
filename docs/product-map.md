@@ -44,10 +44,10 @@
 
 ### DesktopAssembly（P1）
 
-- **已定**：常驻托盘、按需拉起、单实例、空闲退出、崩溃退避重启；`widget.json` 字段与两种 renderer；宿主只做 6 个 Win32 窗口操作（禁止 `SetParent` 用于 native）；native 不支持贴桌面层；位置按 DIP + 显示器标识记忆；组件上限默认 8（可配置）、壳自启默认开；`idleHold`、`startup` 策略、壳单实例、空态安装入口、Win10 19041+/Win11 x64；**v1 只做 native（wasm/桌面层 P2）**、面板只做组件管理 + 设置 + 诊断（Q1/Q3）。
+- **已定**：常驻托盘、按需拉起、单实例、空闲退出、崩溃退避重启；`widget.json` 字段与两种 renderer；宿主只做 6 个 Win32 窗口操作（native 组件禁止 `SetParent`；wasm 窗口是宿主自己的，桌面层才允许）；位置按 DIP + 显示器标识记忆；组件上限默认 8（可配置）、壳自启默认开；`idleHold`、`startup` 策略、壳单实例、空态安装入口、Win10 19041+/Win11 x64、面板只做组件管理 + 设置 + 诊断（Q1/Q3）；**P2 已补 wasm / 桌面层（Win11 回落 z-order 底部）**。
 - **已补**：回环端点与 token 身份（[host-endpoints](../DesktopAssembly/docs/host-endpoints.md)）、壳状态文件 Schema（[shell-storage](../DesktopAssembly/docs/shell-storage.md)）、MCP 发现注册表与 `ensure`（需求 DA-90–92）。
-- **已实现（2026-11-01）**：四工程 + `SDemo.Shell.slnf`、宿主 MVP（托盘 / 扫描 / 拉起 / 单实例 / 空闲退出 / 崩溃退避 / 定位 / 多屏 / 持久化 / 回环端点）与 native Hello Widget 样例；实现取舍与契约缺口见 [implementation-notes](../DesktopAssembly/docs/implementation-notes.md)，验收清单见 [s1-verification](../DesktopAssembly/docs/s1-verification.md)。
-- **已验收**：窗口管控实现细节已落到代码（`GetWindowRect` 轮询回写、多屏迁移算法）；**Win+D 实测结论 A**（native 组件不会被 Win+D 收起，2026-11-01；状态机兜底保留）。
+- **已实现（2026-11-01）**：四工程 + `SDemo.Shell.slnf`、宿主 MVP（托盘 / 扫描 / 拉起 / 单实例 / 空闲退出 / 崩溃退避 / 定位 / 多屏 / 持久化 / 回环端点）与 native Hello Widget 样例；P2 补 wasm 渲染器（共享 WebView2 环境）、config 表单、主题/权限/热键/托盘入口/完整诊断/截屏隐藏/`tools/pack.ps1`。实现取舍与契约缺口见 [implementation-notes](../DesktopAssembly/docs/implementation-notes.md)，验收清单见 [s1-verification](../DesktopAssembly/docs/s1-verification.md) 与 [s2-verification](../DesktopAssembly/docs/s2-verification.md)。
+- **已验收**：窗口管控实现细节已落到代码（`GetWindowRect` 轮询回写、多屏迁移算法）；**Win+D 实测结论 A**（native 组件不会被 Win+D 收起，2026-11-01；状态机兜底保留）；wasm 首屏 / 桌面层 / 热键见 S2。
 
 ### sdemo.planner（P2）
 

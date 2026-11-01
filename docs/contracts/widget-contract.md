@@ -1,6 +1,6 @@
 # 组件契约（`widget.json`）
 
-> 状态：已实现并验收（2026-11-01，P1 只做 native）
+> 状态：已实现并验收（2026-11-01）：native 与 wasm 两种 renderer、桌面层（Win11 回落）均已落地，见 [S2 验收](../../DesktopAssembly/docs/s2-verification.md)
 > 关联：[总体架构](../../DesktopAssembly/docs/desktop-shell.md) · [宿主控制协议](host-protocol.md)
 > 配套 Schema：[widget.schema.json](../../DesktopAgent/contracts/schemas/widget.schema.json)
 > 适用范围：`sdemo.planner` 及后续所有要挂到桌面上的应用
@@ -143,6 +143,12 @@
 
 **为什么 `native` 不允许贴桌面层**：`SetParent` 到另一个进程的 `Progman`/`WorkerW` 是唯一能做「桌面之上、所有窗口之下」的手段，但它会在 DPI 缩放、输入法候选框、焦点切换上反复出问题，且 Explorer 重启后句柄失效。这条能力只对宿主自渲染的 `wasm` 组件开放。
 
+**wasm 的载荷与宿主职责（2026-11-01 实现）**：
+- `wasm.webRoot` 默认 `payload`，必须相对安装目录、不能含 `..` 或符号链接；`wasm.entry` 默认 `index.html`，必须存在于该目录。缺失在清单校验阶段即失败（`WIDGET_PAYLOAD_MISSING`），不会等到运行时才白窗。
+- 宿主用**一个共享的 `CoreWebView2Environment`**（user data 在 `%LOCALAPPDATA%\SDemo\DesktopAssembly\webview2`）建窗，通过虚拟主机映射加载 `payload`（不暴露 `file://`）。
+- 首屏由宿主自绘骨架（跟随主题）盖住，`NavigationCompleted` 成功后才显示页面，因此不会出现白窗；渲染进程由 WebView2 自己管理。
+- **wasm 组件不需要应用进程**：`app.json` 仍要校验哈希（供 `ensure` / MCP 用），但组件显示不依赖 `state=ready`。
+
 **为什么 `native` 不需要宿主加载程序集**：应用自己做窗口，宿主只发 `SetWindowPos` / `SetWindowLongPtr`。这避免了 `AssemblyLoadContext` 版本矩阵这一整摊事——这是当初选 native 的主要原因之一。
 
 ## 6. 布局声明（宿主执行，应用不碰）
@@ -150,7 +156,7 @@
 | 声明 | 宿主行为 |
 | --- | --- |
 | `layer=floating` | 窗口置顶（`alwaysOnTopDefault` 决定初始值）；用户可右键切「置顶 / 普通」 |
-| `layer=desktop` | 仅 `wasm`：`SetParent` 到 `WorkerW`；与置顶互斥，界面里灰掉置顶选项 |
+| `layer=desktop` | 仅 `wasm`：优先 `SetParent` 到 `WorkerW`；Win11 没有可用 WorkerW 时回退为**普通窗口压到 z-order 底部**（壁纸之上、应用窗口之下），宿主在日志与诊断里标 `mode=TopLevelBottom`。与置顶互斥，界面里灰掉置顶选项 |
 | `position.mode=anchored` | 首次出现在指定角 + 偏移；拖动后转为 `remember` |
 | `position.mode=remember` | 用 `widgets.json` 里存的矩形；载入时校验该矩形仍落在**当前**的某个显示器上，否则回落到锚点 |
 | `snapPx` | 拖动松手时距离屏幕边缘 < `snapPx` 则吸附 |
@@ -187,6 +193,10 @@
 
 不支持 `object` / `array` / `oneOf`。需要复杂表单的应用请在自己的主窗口里做，`config` 只承载「在桌面上顺手改一两个开关」这类需求。
 
+**不支持的结构在清单校验阶段就判非法**（`WIDGET_CONFIG_INVALID`），而不是静默砍掉表单：宿主只渲染它承诺支持的那一小组控件，写错了应显式报出来。`default` 会落进 `widgets.json` 作为初值；之后扫描只补齐缺失项、把已存值夹回 `minimum/maximum`，用户改过的值不会被重置。值只存 `widgets.json`，不下发到应用设置（DA-63）。
+
+枚举与路径的写法：`string` + `enum`（下拉）、`string` + `format: "path"`（文件/目录选择）；数值支持 `minimum` / `maximum`。
+
 ## 9. 校验与降级
 
 | 情况 | 宿主行为 |
@@ -194,6 +204,9 @@
 | `widget.json` 语法错误 / 必填缺失 | 跳过该组件，`widgets.json` 保留其布局，托盘菜单显示「1 个组件加载失败（查看原因）」 |
 | `id` 重复 | 后加载的判失败（按目录名顺序） |
 | `schemaVersion` 更高 | 跳过并提示「需要更新 DesktopAssembly」 |
+| `config` 使用 `object` / `array` / `oneOf` / `$ref` | 判非法（`WIDGET_CONFIG_INVALID`），整份清单不加载：宿主只承诺 Schema 子集 |
+| `renderer=wasm` 但 `payload` 目录或入口文件不存在 | 判非法（`WIDGET_PAYLOAD_MISSING`）：载荷必须随安装目录分发 |
+| `activation.hotkey` 无法解析 | 只告警、不加载该热键（组件仍可用），注册冲突在面板/托盘提示 |
 | `hostApiVersion` 主版本不同 | 禁用该组件，不影响其它组件 |
 | `layer=desktop` 但 `renderer=native` | 判非法，整份清单不加载（契约冲突必须显式报错，不要静默纠正） |
 | 应用 exe 不存在 / 哈希不符 | 不启动；「修复 / 移除」两个入口（见 host-protocol §3） |
