@@ -206,7 +206,7 @@ Agent 与 App 的迁移策略不同是**故意的**：Agent 已有大量线上�
 | `ws.ps1` | 主仓 `tools/` | 工作区清单、入口、命令、worktree 建议 |
 | `check-doc-links.ps1` | 主仓 `tools/` | 全仓（含子仓）相对链接必须可解析 |
 | `check-repo-guards.ps1` | Agent 仓 `tools/` | 体量、脏文件、依赖边、契约同改 |
-| `contract-lint` | 待做（主仓） | JSON Schema 校验 `widget.json` / `app.json` / MCP 工具面 |
+| `contract-lint.ps1` | 主仓 `tools/` | JSON Schema 校验 `widget.json` / `app.json` / `settings.json` / `widgets.json`，外加 appId/mutex/路径等语义检查 |
 | `pack` | 待做（各仓） | 打包 + 回填 sha256 |
 
 ## 13. 本次迁移记录（2026-10-31）

@@ -35,6 +35,7 @@
 ```powershell
 pwsh tools/ws.ps1 list                 # 工作区清单
 pwsh tools/check-doc-links.ps1         # 全仓文档死链（含子仓，按超级仓视角）
+pwsh tools/contract-lint.ps1           # app.json / widget.json / 状态文件 Schema + 语义校验
 dotnet build DesktopAgent/SDemo.DesktopAgent.Wpf.slnf -c Release
 ```
 
