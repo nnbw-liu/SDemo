@@ -53,7 +53,7 @@
 
 - **已实现（2026-11-01）**：五工程 + `SDemo.Planner.slnf`；`todo`/`event` 同库不同表、真实 EF migrations + FTS5；主窗口待办 CRUD、日/周/月日历与拖拽改期、回收站、草稿审阅、ICS 导出；13 个 `todo_*` MCP 工具 + 风险元数据 + 审计；桌面组件 ≤8 条。设计见 [planner-design](../Apps/Planner/docs/planner-design.md)，验证见 [p2-verification](../Apps/Planner/docs/p2-verification.md)。
 - **宿主联调（2026-11-01）**：装到 `%APPDATA%\SDemo\DesktopAssembly\apps` 后被宿主发现，sha256 通过、ensure 拉起、runtime + MCP 13 工具可用、组件由宿主显示、主窗口按需打开；`tools/accept-host.ps1` 可复跑。过程中修掉安装目录误用 LOCALAPPDATA 与组件 command 路由段数错误。
-- **验收收尾**：日历指针拖拽、组件键盘手感、ICS 导入外部日历 3 项人工确认未签字。
+- **验收收尾**：日历指针拖拽、ICS 导入外部日历 2 项人工确认未签字；组件快速新增/勾完成已由 UIA 冒烟覆盖。
 - **已定**：软删 + 7 天回收站；高风险（删除/批量≥5/清空）不可关闭审批；ICS v1 只导出、不导出 RRULE；来源由 MCP 服务端注入。
 - **未做**：PL-06 只读订阅、PL-08 提醒、`calendar_*` 工具（P3/P5）；清单/标签管理 UI、事件跨天显示留后续迭代。
 
