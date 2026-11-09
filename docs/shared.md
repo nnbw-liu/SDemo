@@ -61,3 +61,20 @@
 | Q1 | 共享层交付形态 | NuGet 包 / 契约子模块 / 暂不共享 | NuGet 包，M1 只立契约 |
 | Q2 | 私有 feed 用哪个 | GitHub Packages / 本地目录 feed | GitHub Packages（与仓库同权限） |
 | Q3 | 是否允许"临时复制" | 允许两处、禁止三处 | 允许（Rule of Three），但要在文档里登记 |
+
+## 7. 已落地：UI 共享库（2026-11-08）
+
+从 Planner 的真实界面抽出第一块共享层，放在 `C:\SDemo\Shared`：
+
+- `UI/SDemo.UI.Blazor`（`SDemo.UI.Blazor` 0.1.0）：设计 token、`AppShell`、`Icon`、`Modal`、
+  `SelectBox`、`ToastHost`、`ThemeService`、`IThemeHost`、`AddSdemoBlazorUi()`。
+- `UI/SDemo.UI.Wpf`（`SDemo.UI.Wpf` 0.1.0）：`ThemedWindow`、`TrayIcon`、`ToastWindow`、`SdemoTheme`。
+- `UI/SDemo.UI.Demo`：WPF + BlazorWebView 预览壳，深浅主题、托盘、提醒卡已实机验证。
+
+分发沿用 Q1 的 NuGet 方向，但**还没发 GitHub Packages**：现在用
+`dotnet pack -o C:\SDemo\Shared\artifacts\packages` + 本地 `nuget.config` 源；
+等 Q2 定了再接私有 feed。Planner 暂不迁移，避免把 UI 迁移和 v0.5 回归混在一起；
+迁移清单见 `Shared/README.md`。
+
+共享层已是独立子仓：`git@github.com:nnbw-liu/SDemo.Shared.git`（分支 `main`），
+主仓以 `Shared/` 子模块接入，`.gitmodules` 里 `branch = main`。
