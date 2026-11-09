@@ -18,3 +18,7 @@
 	path = Apps/Meeting
 	url = git@github.com:nnbw-liu/SDemo.Apps.Meeting.git
 	branch = master
+[submodule "Shared"]
+	path = Shared
+	url = git@github.com:nnbw-liu/SDemo.Shared.git
+	branch = main
