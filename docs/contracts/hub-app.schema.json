@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sdemo.local/contracts/hub-app.schema.json",
+  "title": "SDemo Hub 连接配置",
+  "description": "v1.0 冻结。每个应用一个文件：%LOCALAPPDATA%\\SDemo\\Hub\\apps\\<appId>.json。应用是唯一写者。",
+  "type": "object",
+  "required": ["schemaVersion", "appId", "displayName", "version", "kind"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "appId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9_-]+)+$",
+      "maxLength": 128
+    },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "version": { "type": "string", "minLength": 1, "maxLength": 32 },
+    "kind": { "type": "string", "enum": ["app", "agent", "both", "hub"] },
+    "executable": { "type": "string", "minLength": 3, "maxLength": 1024 },
+    "arguments": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "type": "string", "maxLength": 1024 }
+    },
+    "workingDirectory": { "type": "string", "minLength": 3, "maxLength": 1024 },
+    "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+    "baseUrl": {
+      "type": "string",
+      "pattern": "^http://127\\.0\\.0\\.1:(?:[1-9][0-9]{0,4})$",
+      "maxLength": 64
+    },
+    "token": { "type": "string", "minLength": 32, "maxLength": 256 },
+    "pid": { "type": "integer", "minimum": 1 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "state": { "type": "string", "enum": ["running", "stopped"] },
+    "startupTimeoutMs": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 60000,
+      "default": 8000
+    },
+    "icon": { "type": "string", "pattern": "^/[^\\s]*$", "maxLength": 512 },
+    "mcp": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["transport"],
+          "properties": {
+            "transport": { "type": "string", "const": "http" },
+            "path": { "type": "string", "pattern": "^/[^\\s]*$", "maxLength": 256 },
+            "url": {
+              "type": "string",
+              "pattern": "^http://127\\.0\\.0\\.1:(?:[1-9][0-9]{0,4})/[^\\s]*$",
+              "maxLength": 256
+            }
+          },
+          "anyOf": [{ "required": ["path"] }, { "required": ["url"] }],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "agent": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string", "pattern": "^/[^\\s]*$", "maxLength": 256 },
+            "url": {
+              "type": "string",
+              "pattern": "^http://127\\.0\\.0\\.1:(?:[1-9][0-9]{0,4})/[^\\s]*$",
+              "maxLength": 256
+            },
+            "name": { "type": "string", "minLength": 1, "maxLength": 64 }
+          },
+          "anyOf": [{ "required": ["path"] }, { "required": ["url"] }],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "mainWindow": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string", "minLength": 1, "maxLength": 64 },
+            "width": { "type": "integer", "minimum": 320, "maximum": 4096 },
+            "height": { "type": "integer", "minimum": 240, "maximum": 4096 }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "widgets": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "required": ["id", "displayName", "entry", "size"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+          },
+          "displayName": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "description": { "type": "string", "maxLength": 200 },
+          "entry": {
+            "type": "string",
+            "pattern": "^/(?![^\\s]*\\.\\.)[^\\s]*$",
+            "maxLength": 512
+          },
+          "size": { "$ref": "#/$defs/size" },
+          "minSize": { "$ref": "#/$defs/size" },
+          "defaultVisible": { "type": "boolean", "default": false },
+          "defaultHotkey": { "type": ["string", "null"], "maxLength": 64 },
+          "icon": { "type": "string", "pattern": "^/[^\\s]*$", "maxLength": 512 }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "state": { "const": "running" } },
+        "required": ["state"]
+      },
+      "then": {
+        "required": ["port", "baseUrl", "token", "pid", "startedAt"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "kind": { "const": "hub" } },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["port", "baseUrl", "token", "pid", "startedAt", "mcp"]
+      }
+    }
+  ],
+  "$defs": {
+    "size": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 80, "maximum": 4096 },
+        "height": { "type": "integer", "minimum": 80, "maximum": 4096 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}
