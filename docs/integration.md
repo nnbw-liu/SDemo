@@ -38,7 +38,7 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | X-04 | 组件窗口管控（位置/层级/显隐/穿透） | Shell | 同上 §窗口 | ✅ 已定（Win+D 待实测） |
 | X-05 | MCP 回环端点 + token 身份 | Shell + App | [host-endpoints](../DesktopAssembly/docs/host-endpoints.md) | ✅ 已定 |
 | X-06 | MCP 发现注册表与 `ensure`（Agent 冷启动也能找到应用） | Shell + Agent | DA-90–92 | ✅ 需求已立 |
-| X-07 | Agent 侧 MCP client、工具预算、审批映射、断线降级 | Agent | 待写 `agent-mcp-client.md` | 🚧 缺设计 |
+| X-07 | Agent 侧 MCP client、工具预算、审批映射、断线降级 | Agent | [agent-mcp-client](../DesktopAgent/docs/architecture/agent-mcp-client.md) | ✅ v1 已实现（网关式） |
 | X-08 | 统一搜索 fan-out（一次意图并发查多个应用） | Agent | [workbench-roadmap](workbench-roadmap.md) §4.2 | ✅ 已定 |
 | X-09 | 跨应用引用解析与跳转（含 `docId@version#block`） | Agent + KB | [kb-versioning](../Apps/Kb/docs/kb-versioning.md) §引用 | ✅ 已定 |
 | X-10 | 会议候选 → planner 待办的审阅中转 | Agent + Meeting + Planner | [meeting-design](../Apps/Meeting/docs/meeting-design.md) §7 | ✅ 已定 |
@@ -85,7 +85,6 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 
 | 缺口 | 影响 | 下一步 |
 | --- | --- | --- |
-| `agent-mcp-client.md` 未写 | P3 无法开工 | P2 结束前补 |
 | 发现注册表只有需求、没有 schema | Shell 与 Agent 各自理解 | P1 先出 `discovery.json` schema |
 | 没有跨应用集成测试 | 契约快照只覆盖单应用 | P3 加一条端到端：起 3 个 fake server + Agent 调通 |
 | 统一搜索的排序规则 | fan-out 结果可能乱序 | 先按时间 + 相关度，规则写进 Agent 文档 |

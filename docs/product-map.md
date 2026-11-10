@@ -75,7 +75,6 @@
 | --- | --- | --- | --- |
 | `planner-design.md`（event / 日历视图 / ICS / RRULE / 组件布局） | P2 | P2 开工前 | `Apps/Planner/docs/` |
 | `calendar_*` 扩进 `planner-mcp-surface.md` | P2 / P3 | P2 中后期 | `Apps/Planner/docs/` |
-| `agent-mcp-client.md`（连 server、工具预算、审批映射、断线降级） | P3 | P3 开工前 | `DesktopAgent/docs/architecture/` + [integration](integration.md) |
 | `shared-foundation.md`（UUIDv7 / HLC / outbox / FTS 助手 / MCP 信封） | M1 | 定共享层方案时 | `docs/`（见 [shared.md](shared.md)） |
 | `sync-design.md`（op-log 格式、合并规则、冲突呈现） | P5 | P5 开工前 | `Apps/Planner/docs/` |
 | `asr-runtime.md`（whisper 模型分发、校验、耗时档位） | P6 | P6 开工前 | `Apps/Meeting/docs/` |
