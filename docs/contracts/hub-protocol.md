@@ -125,6 +125,7 @@
 - 运行中字段缺失 → Hub 视为离线，等待应用更新文件。
 - `state=stopped` 时允许省略 `token/pid/startedAt`，但保留 `port/baseUrl/widgets` 供离线展示。
 - `mcp` / `agent` 的 `path` 相对 `baseUrl`；若服务监听在另一个端口，用绝对 `url`（仍只允许 `127.0.0.1`）。`path` 与 `url` 至少有一个。
+- `agent` 字段只声明智能体入口地址，契约不规定该地址上的服务形态。本仓约定：`GET /agent` 返回与 `/v1/info` 同形的身份/能力描述（限回环、免鉴权、不含 token），供本机其它 Agent 发现；`list_agents` 只信配置 / info 里的 `agent` 字段，不会去探测该地址。
 
 ### 3.3 组件条目
 
