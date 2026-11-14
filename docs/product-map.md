@@ -11,7 +11,7 @@
 | 产品 | 代码位置 | 数据位置 | 设计文档 | 需求编号 | 分期 |
 | --- | --- | --- | --- | --- | --- |
 | **DesktopAgent**（已有） | 子仓 [`DesktopAgent/`](../DesktopAgent) | `%APPDATA%\SDemo\DesktopAgent\` | [guide/projects](../DesktopAgent/docs/guide/projects.md) | — | 已交付 |
-| **DesktopAssembly** | 子仓 [`DesktopAssembly/`](../DesktopAssembly) | `%APPDATA%\SDemo\DesktopAssembly\`（仅 `apps\` `widgets.json` `settings.json`，**无业务数据**） | [desktop-shell](../DesktopAssembly/docs/desktop-shell.md) · [requirements](../DesktopAssembly/docs/requirements.md) · [widget-contract](contracts/widget-contract.md) · [host-protocol](contracts/host-protocol.md) | DA-01–11、DA-90–92 | P1 |
+| **DesktopAssembly**（Hub） | 子仓 [`DesktopAssembly/`](../DesktopAssembly) | `%APPDATA%\SDemo\DesktopAssembly\`（仅 `apps\` `widgets.json` `settings.json`，**无业务数据**） | [requirements-v2](../DesktopAssembly/docs/requirements-v2.md) · [ui-v2](../DesktopAssembly/docs/ui-v2.md) · [hub-protocol](contracts/hub-protocol.md) · [widget-contract](contracts/widget-contract.md) | FR-1–8（v2） | P1 |
 | **sdemo.planner** | 子仓 [`Apps/Planner/`](../Apps/Planner) | `%APPDATA%\SDemo\Apps\sdemo.planner\`（`planner.db` + `exports\`） | [planner-design](../Apps/Planner/docs/planner-design.md) · [p2-verification](../Apps/Planner/docs/p2-verification.md) · [planner-mcp-surface](../Apps/Planner/docs/planner-mcp-surface.md) | PL-01–14 | P2 已验收 |
 | **sdemo.kb**（数据面服务） | 子仓 [`Kb/`](../Kb)（**不在 `Apps/` 下**） | `%APPDATA%\SDemo\Apps\sdemo.kb\`（`kb.db` + `blobs\`） | [kb-design](../Kb/docs/kb-design.md) · [kb-ui](../Kb/docs/kb-ui.md) · [kb-versioning](../Kb/docs/kb-versioning.md) · [requirements](../Kb/docs/requirements.md) | KB-01–13 | P4 |
 | **sdemo.meeting** | 子仓 [`Apps/Meeting/`](../Apps/Meeting) | `%APPDATA%\SDemo\Apps\sdemo.meeting\`（`meeting.db` + `meetings\{id}\audio\`） | [meeting-design](../Apps/Meeting/docs/meeting-design.md) · [requirements](../Apps/Meeting/docs/requirements.md) | MT-01–14 | P6 |
@@ -45,12 +45,13 @@
 
 ## 3. 各产品：已定 / 未定 / 缺口
 
-### DesktopAssembly（P1）
+### DesktopAssembly（Hub · P1 已实现）
 
-- **已定**：常驻托盘、按需拉起、单实例、空闲退出、崩溃退避重启；`widget.json` 字段与两种 renderer；宿主只做 6 个 Win32 窗口操作（native 组件禁止 `SetParent`；wasm 窗口是宿主自己的，桌面层才允许）；位置按 DIP + 显示器标识记忆；组件上限默认 8（可配置）、壳自启默认开；`idleHold`、`startup` 策略、壳单实例、空态安装入口、Win10 19041+/Win11 x64、面板只做组件管理 + 设置 + 诊断（Q1/Q3）；**P2 已补 wasm / 桌面层（Win11 回落 z-order 底部）**。
-- **已补**：回环端点与 token 身份（[host-endpoints](../DesktopAssembly/docs/host-endpoints.md)）、壳状态文件 Schema（[shell-storage](../DesktopAssembly/docs/shell-storage.md)）、MCP 发现注册表与 `ensure`（需求 DA-90–92）。
-- **已实现（2026-11-01）**：四工程 + `SDemo.Shell.slnf`、宿主 MVP（托盘 / 扫描 / 拉起 / 单实例 / 空闲退出 / 崩溃退避 / 定位 / 多屏 / 持久化 / 回环端点）与 native Hello Widget 样例；P2 补 wasm 渲染器（共享 WebView2 环境）、config 表单、主题/权限/热键/托盘入口/完整诊断/截屏隐藏/`tools/pack.ps1`。实现取舍与契约缺口见 [implementation-notes](../DesktopAssembly/docs/implementation-notes.md)，验收清单见 [s1-verification](../DesktopAssembly/docs/s1-verification.md) 与 [s2-verification](../DesktopAssembly/docs/s2-verification.md)。
-- **已验收**：窗口管控实现细节已落到代码（`GetWindowRect` 轮询回写、多屏迁移算法）；**Win+D 实测结论 A**（native 组件不会被 Win+D 收起，2026-11-01；状态机兜底保留）；wasm 首屏 / 桌面层 / 热键见 S2。
+- **现实（2026-11-14）**：v1 Shell 的代码与文档已整体删除（DesktopAssembly 仓 commit `0c9a4e9`），现行是 **Hub v2**：发现 / 连接 / 组件承载 / 目录 MCP / 托盘热键 / 诊断。
+- **需求与设计**：[requirements-v2](../DesktopAssembly/docs/requirements-v2.md)（FR-1–8）· [ui-v2](../DesktopAssembly/docs/ui-v2.md) · [控制页](../DesktopAssembly/docs/ui-control-pages.md)
+- **验收与收尾**：[requirements-v2-audit](../DesktopAssembly/docs/requirements-v2-audit.md) · 里程碑 [M0](../DesktopAssembly/docs/m0-spike.md) / [M1](../DesktopAssembly/docs/m1-hub-skeleton.md) / [M2](../DesktopAssembly/docs/m2-planner-calendar.md) / [M3](../DesktopAssembly/docs/m3-directory-tray.md) / [M4](../DesktopAssembly/docs/m4-hotkeys-tray.md) · [P0 加固](../DesktopAssembly/docs/p0-hardening.md)
+- **契约**：[hub-protocol](contracts/hub-protocol.md)（2026-11-08 冻结）· [hub-app.schema.json](contracts/hub-app.schema.json)；v1 的 [host-protocol](contracts/host-protocol.md) / [widget-contract](contracts/widget-contract.md) 仅作历史参考
+- **已定**：宿主只做窗口/进程/摆放，**无业务数据**；回环端点 + 进程级 token；MCP 目录服务（`list_apps` / `list_agents` / `list_mcp_servers`）；组件由应用自己渲染（Blazor Server），Hub 不加载应用 DLL；**Win+D 实测结论 A**（native 组件不会被收起，状态机兜底保留）。
 
 ### sdemo.planner（P2）
 

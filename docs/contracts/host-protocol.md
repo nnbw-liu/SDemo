@@ -1,7 +1,8 @@
 # 宿主控制协议（DesktopAssembly ⇄ 应用）
 
 > 状态：V2（2026-11-02）：应用自安装 + 自登记 + 宿主收养；`app.json` / `widget.json` 合并为组件登记，wasm 移除。代码迁移见 S5
-> 关联：[总体架构](../../DesktopAssembly/docs/desktop-shell.md) · [组件契约](widget-contract.md)
+> ⚠️ **已被取代（2026-11-14）**：v1 Shell 代码已删除，现行契约见 [Hub 连接与组件契约](hub-protocol.md)（2026-11-08 冻结）。本文只作历史参考，不再维护。
+> 关联：[Hub 需求基线](../../DesktopAssembly/docs/requirements-v2.md) · [组件契约](widget-contract.md) · [Hub 契约](hub-protocol.md)
 > 适用范围：DesktopAssembly 与所有已安装应用之间的登记、进程、IPC、窗口管控约定
 
 ---
@@ -84,7 +85,7 @@ Discovered → Untrusted → Trusted → Launching → Handshaking → Ready ⇄
 | Idle | 仅宿主拉起的实例：组件隐藏且超过 `idleTimeoutMs` 无调用 | 发 `POST /v1/shutdown`，超时后 `TerminateProcess`；用户自启的实例只发请求，不强杀 |
 | Stopped | 无存活实例，登记仍在 | 组件显示占位；按 `startup` 策略可代拉起 |
 
-> 应用可通过 `POST /v1/widgets/{id}/request { "kind": "idleHold", "value": true }` 声明「暂不空闲退出」；宿主只存内存标志，进程退出即清（见 [host-endpoints](../../DesktopAssembly/docs/host-endpoints.md) §6、DA-95）。
+> 应用可通过 `POST /v1/widgets/{id}/request { "kind": "idleHold", "value": true }` 声明「暂不空闲退出」；宿主只存内存标志，进程退出即清（见 [Hub 契约](hub-protocol.md) §4.2、DA-95）。
 
 **接管（DA-22，V2 修订）**：拉起或接管前先读该应用的 `runtime.json`。若 pid 仍存活、**该进程的真实 exe 路径等于信任台账里的路径**、且用文件里的 token 完成 `/v1/health` 与 `/v1/handshake`，则**直接接管**（不产生第二个进程）；否则按 §4 处理残留指针。**只校验 pid 存活和进程名是不够的**：必须比对 exe 路径，避免接管一个同名的无关进程。
 
@@ -118,7 +119,7 @@ Discovered → Untrusted → Trusted → Launching → Handshaking → Ready ⇄
 - **与登记的关系**：`runtime.json` 只在进程存活期存在，退出（含崩溃）后由应用或宿主删除；`registry\<appId>.json` 是持久登记，退出后**保留**。
 - 端口与 token 必须写在 `%LOCALAPPDATA%`：它们绑定本机进程，**不可随 `%APPDATA%` 漫游**；文件 ACL 依赖用户配置目录继承（仅当前用户），壳不额外改写 ACL。
 
-> 宿主自身的监听器、`host.json`、`client-token` 与 Agent 使用的 client 面端点，见 [host-endpoints.md](../../DesktopAssembly/docs/host-endpoints.md)；本节只定义每个应用的 `runtime.json`。
+> 宿主自身的监听器、`host.json`、`client-token` 与 Agent 使用的 client 面端点，见 [hub-protocol.md](hub-protocol.md) §3；本节只定义每个应用的 `runtime.json`。
 
 ## 5. 握手与鉴权
 
@@ -180,7 +181,7 @@ POST /v1/handshake
 
 **注意**：`request` 是「请求」不是「设置」。宿主是唯一的策略执行者，收到越界请求（例如让宿主显示/关闭主窗口、改显隐策略）返回 `403 HOST_POLICY_DENIED`，并在日志里记一条。
 
-> 以上是 **app 面**（应用 token）。**client 面**（Agent 的 `GET /v1/host`、`GET /v1/apps`、`POST ensure`）与两类 token 的配对规则见 [host-endpoints.md](../../DesktopAssembly/docs/host-endpoints.md) §5–§7。
+> 以上是 **app 面**（应用 token）。**client 面**（Agent 的 `GET /v1/host`、`GET /v1/apps`、`POST ensure`）与两类 token 的配对规则见 [hub-protocol.md](hub-protocol.md) §3–§4。
 
 ## 7. 窗口管控白名单（组件窗口 = 应用自绘）
 

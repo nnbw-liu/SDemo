@@ -2,7 +2,7 @@
 
 > 状态：蓝图稿，2026-10-29（等立项后再展开为详细设计）
 > 图示：[[拓扑图](../DesktopAgent/.archify/architecture-sdemo-topology-20261029-231500/topology.html)] · [[场景交互图](../DesktopAgent/.archify/sequence-sdemo-meeting-plan-20261029-231500/scenario.html)]
-> 关联：[总体架构](../DesktopAssembly/docs/desktop-shell.md) · [工作台规划](workbench-roadmap.md) · [会议设计](../Apps/Meeting/docs/meeting-design.md) · [知识库设计](../Kb/docs/kb-design.md) · [知识库版本](../Kb/docs/kb-versioning.md)
+> 关联：[Hub 需求基线](../DesktopAssembly/docs/requirements-v2.md) · [工作台规划](workbench-roadmap.md) · [会议设计](../Apps/Meeting/docs/meeting-design.md) · [知识库设计](../Kb/docs/kb-design.md) · [知识库版本](../Kb/docs/kb-versioning.md)
 
 ---
 

@@ -1,7 +1,8 @@
 # 组件契约（`widget.json`）
 
 > 状态：V2（2026-11-02）：组件窗口只由应用进程创建；wasm 渲染器与贴桌面层作废（代码迁移见 S5）
-> 关联：[总体架构](../../DesktopAssembly/docs/desktop-shell.md) · [宿主控制协议](host-protocol.md)
+> ⚠️ **部分被取代（2026-11-14）**：组件承载与登记条目以 [Hub 契约](hub-protocol.md) §3.3 / §5 为准。本文描述 v1 组件模型，保留作历史参考。
+> 关联：[Hub 需求基线](../../DesktopAssembly/docs/requirements-v2.md) · [宿主控制协议](host-protocol.md) · [Hub 契约](hub-protocol.md)
 > 配套 Schema：`registration.schema.json`（由旧 `app.schema.json` + `widget.schema.json` 合并，S5 落地）
 > 适用范围：`sdemo.planner` 及后续所有要挂到桌面上的应用
 

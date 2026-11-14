@@ -1,7 +1,7 @@
 # 个人工作台：总体规划（v1）
 
 > 状态：规划稿，2026-10-29
-> 关联：[总体架构](../DesktopAssembly/docs/desktop-shell.md) · [组件契约](contracts/widget-contract.md) · [宿主控制协议](contracts/host-protocol.md) · [待办 MCP 工具面](../Apps/Planner/docs/planner-mcp-surface.md) · [工作区知识库](../DesktopAgent/docs/architecture/workspace-memory.md)
+> 关联：[Hub 需求基线](../DesktopAssembly/docs/requirements-v2.md) · [组件契约](contracts/widget-contract.md) · [宿主控制协议](contracts/host-protocol.md) · [待办 MCP 工具面](../Apps/Planner/docs/planner-mcp-surface.md) · [工作区知识库](../DesktopAgent/docs/architecture/workspace-memory.md)
 
 ---
 
@@ -164,7 +164,7 @@ v1 全部铺开后，模型能看到的工具会变成：
 **P1–P5 合计约 33–47 人日**，单人全职约 **7–10 周**（含 20% buffer）。P6 另算。
 
 > **进度快照（2026-11-01）**
-> - **P1 ✅**：DesktopAssembly 宿主 MVP + native 组件已按 [S1 验收](../DesktopAssembly/docs/s1-verification.md) 通过；Win+D 结论 A。
+> - **P1 ✅**：DesktopAssembly 宿主 MVP + native 组件已按 [M1 记录](../DesktopAssembly/docs/m1-hub-skeleton.md) 通过；Win+D 结论 A。
 > - **P2 ✅**：planner 五件套、13 个 `todo_*`、主窗口日历/回收站/草稿、组件与 ICS 导出已实现；
 >   构建 0 警告、34 个测试、MCP 冒烟、宿主发现/ensure/组件/主窗口联调、日历真实拖拽均通过；
 >   ICS 已实测导入 Outlook（待办默认 `VEVENT`，修复 VTODO 被忽略的问题）

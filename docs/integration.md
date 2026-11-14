@@ -36,7 +36,7 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | X-02 | 应用注册与清单校验（`app.json`/`widget.json`/sha256） | Shell + 全部 App | [widget-contract](contracts/widget-contract.md) | ✅ 已定 |
 | X-03 | 宿主按需拉起 + 单实例 + 空闲退出 + 崩溃退避 | Shell | [host-protocol](contracts/host-protocol.md) | ✅ 已定 |
 | X-04 | 组件窗口管控（位置/层级/显隐/穿透） | Shell | 同上 §窗口 | ✅ 已定（Win+D 待实测） |
-| X-05 | MCP 回环端点 + token 身份 | Shell + App | [host-endpoints](../DesktopAssembly/docs/host-endpoints.md) | ✅ 已定 |
+| X-05 | MCP 回环端点 + token 身份 | Shell + App | [hub-protocol](contracts/hub-protocol.md) §3–§4 | ✅ 已定 |
 | X-06 | MCP 发现注册表与 `ensure`（Agent 冷启动也能找到应用） | Shell + Agent | DA-90–92 | ✅ 需求已立 |
 | X-07 | Agent 侧 MCP client、工具预算、审批映射、断线降级 | Agent | [agent-mcp-client](../DesktopAgent/docs/architecture/agent-mcp-client.md) | ✅ v1 已实现（网关式） |
 | X-08 | 统一搜索 fan-out（一次意图并发查多个应用） | Agent | [workbench-roadmap](workbench-roadmap.md) §4.2 | ✅ 已定 |
