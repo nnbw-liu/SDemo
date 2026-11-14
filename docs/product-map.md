@@ -30,8 +30,11 @@
 │  └─ settings.json
 └─ Apps\
    ├─ sdemo.planner\planner.db   ← todo + event（P2）
-   ├─ sdemo.kb\kb.db             ← 版本链 + 块 + 索引（P4）
+   ├─ sdemo.kb\kb.db + blobs\    ← 版本链 + 块 + 索引 + 原件（P4）
    └─ sdemo.meeting\             ← meeting.db + meetings\{id}\audio\（P6）
+
+> 注意：`%APPDATA%\SDemo\Apps\` 是**运行时数据**约定（按 `appId` 分目录，所有产品一致），
+> 与仓库层级无关。KB 的代码仓在根级 `Kb/`，数据仍落 `Apps\sdemo.kb\`。
 
 %LOCALAPPDATA%\SDemo\
 ├─ DesktopAssembly\runtime\      ← runtime.json（pid/端口/token），不可漫游
