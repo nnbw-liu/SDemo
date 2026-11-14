@@ -63,9 +63,9 @@
 
 ### sdemo.kb（P4）
 
-- **已实现（2026-11-14，P4-a 地基 / P4-b 保留）**：五工程 + `SDemo.Kb.slnf`；不可变版本链（DAG）+ 内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的中文检索与三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；回环写面 ingest / revise / promote / retract（per-app token、幂等）；11 个 `kb_*` MCP 工具 + 风险元数据；写入方 outbox；staging TTL（会议 30 / Agent 90）→ 回收站 7 天 → 块/原件 GC（被引用文档整篇保护）；收件箱、批量归档、存储统计与保留设置。49 个测试覆盖验收项。
-- **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留、笔记 30 版；`kind` 白名单 note / reference / requirement / decision；导入 md / txt 先行；UI 用 WPF + BlazorWebView，需独立 Web / Viewer 工程（spike 见 [kb-ui-spike](../Kb/docs/kb-ui-spike.md)）。
-- **未做**：docx / pptx / xlsx / pdf 解析与 anchor（P4-d）；KB 查看器界面（P4-e）；命名修订 / 多父合并（P4-c）；向量检索（P4+）。
+- **已实现（2026-11-14，P4-a 地基 / P4-b 保留 / P4-e 查看器第一刀）**：七工程 + `SDemo.Kb.slnf`；不可变版本链（DAG）+ 内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的中文检索与三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；回环写面 ingest / revise / promote / retract（per-app token、幂等）；11 个 `kb_*` MCP 工具 + 风险元数据；写入方 outbox；staging TTL → 回收站 7 天 → 块/原件 GC（被引用文档整篇保护）；收件箱、批量归档、存储统计与保留设置；WPF + BlazorWebView 查看器的 01 库 / 02 文档 / 04 待归档 / 06 检索四屏。52 个测试覆盖数据面验收项。
+- **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留、笔记 30 版；`kind` 白名单 note / reference / requirement / decision；导入 md / txt 先行；查看器选项 A（内嵌 KbServer），Web / Viewer 独立工程（[kb-ui-spike](../Kb/docs/kb-ui-spike.md)）。
+- **未做**：03 版本对比 / 05 导入 / 07 设置屏；docx / pptx / xlsx / pdf 解析与 anchor（P4-d）；命名修订 / 多父合并（P4-c）；向量检索（P4+）。
 
 ### sdemo.meeting（P6）
 
