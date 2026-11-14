@@ -6,6 +6,20 @@
 
 ---
 
+## 0. 术语（先固定，别各叫各的）
+
+| 术语 | 定义 | 约定 / 不要叫 |
+| --- | --- | --- |
+| **引用**（reference / link） | 一个实体指向 KB 某一块的 URI：`sdemo.kb/doc/<docId>@v<seq>#<blockId>` | 必须带版本；只存 `docId` 会让历史引用漂 |
+| **引用登记**（reference registration） | 外部实体（Planner 待办、Meeting 议题…）把自己对 KB 的引用写进 KB 的 `kb_link`，KB 才看得到影响面 | 不是把内容复制进 KB；不做跨库合并 |
+| **待归档**（staging） | KB 中 `retention=staging` 的内容：有 TTL，确认后 promote 为 durable | 界面/文档统一叫「待归档」，**不再叫「待归档收件箱」** |
+| **归档**（durable） | 用户确认保留的内容：无 TTL，参与引用保护 | 不是"移动到另一个库" |
+| **影响面**（impact） | 反查所有指向某文档/块的引用，标出「来源已变更」 | 结论由 Agent 解释，KB 只给清单 |
+| **引用保护**（reference protection） | 被引用指向的块不参与 GC；有引用的文档不物理清理 | 保护的是块，不是"文档标题" |
+| **会议收尾聚合** | 会议结束后由 Meeting/Agent 聚合议题、决议与动作项 | 由 Agent/Meeting 做，**KB 不合并各应用数据库** |
+
+---
+
 ## 1. 联动全景
 
 ```
@@ -48,6 +62,7 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | X-14 | 应用零模型凭证（出现 `ApiKey`/`IChatClient` 即错） | 全部 App | 铁律 | ✅ 铁律 |
 | X-15 | 宿主零业务数据（不得出现 `DbContext`/SQL） | Shell | 铁律 | ✅ 铁律 |
 | X-16 | 软删除 + 回收站 + 审计落库 | 全部 App | 铁律 | ✅ 铁律 |
+| X-17 | 外部引用登记（Planner/Meeting → KB） | Planner + Meeting + KB | [KB `/v1/refs`](../Kb/AGENTS.md)；本文 §3.1 | 🚧 KB 契约已完成，App 接入待做 |
 
 ## 3. 一次跨应用动作的流程（以"把会议候选转成待办"为例）
 
@@ -62,6 +77,33 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 ```
 
 每一步的失败都要可降级：应用未启动（`ensure` 拉起）、端口/ token 失效（重新握手）、断线（Agent 提示而非静默失败）。
+
+### 3.1 引用登记：影响面与引用保护的里子
+
+只把 `sdemo.kb/doc/...` 存进 Planner 的 `link` 表，KB 是**看不到**的：`kb_refs` 只会返回 KB 文档之间的引用，
+回收站清理也不会因为待办引用了某块而保护它。所以外部引用必须**登记**到 KB：
+
+```
+Planner todo  ──(link 表变化 / outbox)──►  POST /v1/refs
+Meeting 议题 ──(议题引用 / outbox)──────►  POST /v1/refs
+                                             │
+                                    kb_link(doc_id='', from_uri=实体 URI)
+                                             │
+                         kb_refs / 删除影响面 / 块 GC / 文档清理保护
+```
+
+| 项 | 约定 |
+| --- | --- |
+| 登记 | `POST /v1/refs`：`source{appId,entityUri}` + `to`（必须带版本）+ `rel` |
+| 撤销 | `POST /v1/refs/retract`：按来源实体撤销（可限定 `to` / `rel`） |
+| 查询 | `GET /v1/refs?fromUri=...`：返回该实体登记过的引用；普通 App 只能看自己的 |
+| 身份 | `appId` 由 token 注入，`source.appId` 只用于比对，不能自报 |
+| 幂等 | `(from_uri, to_uri, rel)` 唯一；重复登记只刷新 `updated_at` |
+| 清理责任 | 实体删除/链接移除时撤销登记；KB 不读 App 的库 |
+| KB 侧效果 | `kb_refs` inbound、`kb_delete` 影响面、块 GC、回收站物理清理都算外部引用 |
+
+**会议收尾聚合不做跨库合并**：Meeting 负责把议题/决议聚合成候选，Agent 负责跨应用编排；
+KB 只接收最终的引用登记与内容投影，不反向读取 Meeting/Planner 的数据库。
 
 ## 4. 审批矩阵（跨应用统一）
 
@@ -88,3 +130,6 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | 发现注册表只有需求、没有 schema | Shell 与 Agent 各自理解 | P1 先出 `discovery.json` schema |
 | 没有跨应用集成测试 | 契约快照只覆盖单应用 | P3 加一条端到端：起 3 个 fake server + Agent 调通 |
 | 统一搜索的排序规则 | fan-out 结果可能乱序 | 先按时间 + 相关度，规则写进 Agent 文档 |
+| KB 写面 token 仍靠 `--issue-token` 手工签发 | Planner/Meeting 无法自动登记引用 | 做首次启动签发 + App 侧 outbox；先定 token 存放位置与 ACL |
+| Planner 已有 `link` 表，但未接 `/v1/refs` | 待办引用不计入影响面/引用保护 | 在 Planner 写 `link` 的同事务落 outbox，后台补登记；删除时撤销 |
+| Meeting 尚无 `src/` | 议题引用无法登记 | 开工时把 `mtg_topic` 的外部引用按同一契约接入 |
