@@ -9,7 +9,7 @@
 | --- | --- | --- | --- | --- |
 | `agent`（DesktopAgent） | `DesktopAgent/` | ✅ 已有 | `DesktopAgent/AGENTS.md` | `dotnet build SDemo.DesktopAgent.Wpf.slnf -c Release` |
 | `shell`（DesktopAssembly） | `DesktopAssembly/` | ✅ P1 已实现并验收 | `DesktopAssembly/AGENTS.md` | `dotnet build SDemo.Shell.slnf -c Release` |
-| `kb`（sdemo.kb） | `Kb/` | ✅ P4-a/b + P4-e 四屏 | `Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
+| `kb`（sdemo.kb） | `Kb/` | ✅ P4-a/b + P4-e 四屏 + refs/token | `Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
 | `planner`（sdemo.planner） | `Apps/Planner/` | ✅ P2 已验收 | `Apps/Planner/AGENTS.md` | `dotnet build SDemo.Planner.slnf -c Release` |
 | `meeting`（sdemo.meeting） | `Apps/Meeting/` | 🚧 规划 | `Apps/Meeting/AGENTS.md` | `dotnet build SDemo.Meeting.slnf -c Release` |
 
@@ -67,3 +67,4 @@ dotnet build DesktopAgent/SDemo.DesktopAgent.Wpf.slnf -c Release
 | `widget.json` / Hub 连接与组件契约 | `docs/contracts/`（现行 [hub-protocol](docs/contracts/hub-protocol.md)；`widget-contract` / `host-protocol` 已是历史） |
 | 共享层怎么落 | `docs/shared.md` |
 | 某个产品的开工清单 | 各子仓 `AGENTS.md` + `docs/requirements.md` |
+
