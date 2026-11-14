@@ -9,7 +9,7 @@
 | --- | --- | --- | --- | --- |
 | `agent`（DesktopAgent） | `DesktopAgent/` | ✅ 已有 | `DesktopAgent/AGENTS.md` | `dotnet build SDemo.DesktopAgent.Wpf.slnf -c Release` |
 | `shell`（DesktopAssembly） | `DesktopAssembly/` | ✅ P1 已实现并验收 | `DesktopAssembly/AGENTS.md` | `dotnet build SDemo.Shell.slnf -c Release` |
-| `kb`（sdemo.kb） | `Kb/` | ✅ P4-a 地基已落地 | `Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
+| `kb`（sdemo.kb） | `Kb/` | ✅ P4-a/P4-b 已落地 | `Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
 | `planner`（sdemo.planner） | `Apps/Planner/` | ✅ P2 已验收 | `Apps/Planner/AGENTS.md` | `dotnet build SDemo.Planner.slnf -c Release` |
 | `meeting`（sdemo.meeting） | `Apps/Meeting/` | 🚧 规划 | `Apps/Meeting/AGENTS.md` | `dotnet build SDemo.Meeting.slnf -c Release` |
 
