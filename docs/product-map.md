@@ -63,9 +63,9 @@
 
 ### sdemo.kb（P4）
 
-- **已实现（2026-11-14，P4-a 地基 / P4-b 保留 / P4-e 查看器七屏）**：七工程 + `SDemo.Kb.slnf`；不可变版本链（DAG）+ 内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的中文检索与三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；外部实体引用登记 `/v1/refs`（Planner 的 `KbRefSyncLoop` 监听 link 变化立即登记/撤销，30 秒兜底）；per-app token 首次启动自动签发到 `%LOCALAPPDATA%\SDemo\Hub\apps\sdemo.kb\tokens\` 并收紧 ACL 到当前用户；回环写面 ingest / revise / promote / retract；11 个 `kb_*` MCP 工具 + 风险元数据；写入方 outbox；staging TTL → 回收站 7 天 → 块/原件 GC；待归档、批量归档、存储统计与保留设置；WPF + BlazorWebView 查看器的 01 库 / 02 文档 / 03 版本对比 / 04 待归档 / 05 导入（md/txt）/ 06 检索 / 07 设置七屏。65 个 KB 测试 + 120 个 Planner 测试覆盖验收项。
-- **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留、笔记 30 版；`kind` 白名单 note / reference / requirement / decision；导入 md / txt 先行；查看器选项 A（内嵌 KbServer），Web / Viewer 独立工程（[kb-ui-spike](../Kb/docs/kb-ui-spike.md)）；会议收尾聚合归 Agent/Meeting，KB 不做跨库合并；token 明文落 `%LOCALAPPDATA%` 且 ACL 仅当前用户。
-- **未做**：docx / pptx / xlsx / pdf 解析与 anchor（P4-d）；命名修订 / 多父合并（P4-c）；Meeting 侧 `/v1/refs` 接入（尚无 `src/`）；向量检索（P4+）。
+- **已实现（2026-11-14，P4-a 地基 / P4-b 保留 / P4-e 查看器七屏 / P4-d 格式首版）**：七工程 + `SDemo.Kb.slnf`；不可变版本链（DAG）+ 内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的中文检索与三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；外部实体引用登记 `/v1/refs`（Planner 的 `KbRefSyncLoop` 监听 link 变化立即登记/撤销）；per-app token 首次启动自动签发并收紧 ACL；回环写面 ingest / revise / promote / retract；11 个 `kb_*` MCP 工具；写入方 outbox；staging TTL → 回收站 7 天 → 块/原件 GC；待归档、批量归档、存储统计与保留设置；md / txt / docx / pptx / xlsx / 文字层 pdf 导入（docx para、pptx slide、xlsx sheet!range、pdf page anchor）；WPF + BlazorWebView 查看器七屏（含版本对比、设置、导入）。70 个 KB 测试 + 120 个 Planner 测试覆盖验收项。
+- **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留、笔记 30 版；`kind` 白名单；导入优先 md / txt 再 Office / PDF；查看器选项 A（内嵌 KbServer）；会议收尾聚合归 Agent/Meeting，KB 不做跨库合并；token 明文落 `%LOCALAPPDATA%` 且 ACL 仅当前用户。
+- **未做**：扫描件 PDF / 图片 OCR 与 `derived_state=pending` 派生；导入原件入库/引用计数；命名修订 / 多父合并（P4-c）；Meeting 侧 `/v1/refs` 接入；向量检索（P4+）。
 
 ### sdemo.meeting（P6）
 
