@@ -1,12 +1,13 @@
 {
   "id": "kb",
   "title": "sdemo.kb（知识库）",
-  "status": "planned",
+  "status": "active",
   "repo": "Kb",
   "entry": "AGENTS.md",
   "paths": ["src", "tests"],
   "readOnlyPaths": [],
   "build": "dotnet build SDemo.Kb.slnf -c Release",
-  "test": "dotnet test tests -c Release",
+  "test": "dotnet test tests\\SDemo.Kb.Tests -c Release",
   "deny": ["obj", "bin", "TestResults", "docs/requirements.md"]
 }
+

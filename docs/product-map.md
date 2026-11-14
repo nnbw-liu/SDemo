@@ -63,9 +63,9 @@
 
 ### sdemo.kb（P4）
 
-- **已定**：文档实体 + 不可变版本链（DAG）+ 块级内容寻址；块级与词级 diff；变更理由 `rationale` 三入口；三个索引面（当前态 / 历史态 / 变更事实）+ 查询路由；**不向量化差异**；引用存 `docId@version#block` 以支持影响面反查；零模型凭证。
-- **未定**：文档的 `kind` 分类（note / reference / requirement / decision）默认行为；导入源优先级（md / docx / pdf 谁先）。
-- **缺口**：MCP 工具面仍是草案（§10），需要随 P4 细化。
+- **已实现（2026-11-14，P4-a 地基）**：五工程 + `SDemo.Kb.slnf`；不可变版本链（DAG）+ 内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的中文检索与三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；回环写面 ingest / revise / promote / retract（per-app token、幂等）；11 个 `kb_*` MCP 工具 + 风险元数据；写入方 outbox。36 个测试覆盖验收项。
+- **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留、笔记 30 版；`kind` 白名单 note / reference / requirement / decision；导入 md / txt 先行。
+- **未做**：docx / pptx / xlsx / pdf 解析与 anchor（P4-d）；TTL、待归档收件箱、KB 查看器界面（P4-b）；向量检索（P4+）。
 
 ### sdemo.meeting（P6）
 
@@ -109,3 +109,4 @@ M0 基建（已做）──► M1 共享层 ──┬──► P1 Shell ──�
 | 数据写在哪、能不能备份 | 本文 §2 |
 | 组件清单长什么样、宿主怎么拉起 | [contracts/widget-contract](contracts/widget-contract.md) / [contracts/host-protocol](contracts/host-protocol.md) |
 | 某个应用的工具有哪些、谁要审批 | 各产品设计文档 + [integration](integration.md) §4 |
+
