@@ -63,9 +63,9 @@
 
 ### sdemo.kb（P4）
 
-- **已实现（2026-11-14，P4-a 地基 / P4-b 保留 / P4-e 查看器七屏 / P4-d 格式·原件·派生首版）**：七工程 + `SDemo.Kb.slnf`；不可变版本链（DAG）+ 内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的中文检索与三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；外部实体引用登记 `/v1/refs`（Planner 监听 link 变化立即登记/撤销）；per-app token 首次启动自动签发并收紧 ACL；回环写面 ingest / revise / promote / retract；11 个 `kb_*` MCP 工具；写入方 outbox；staging TTL → 回收站 7 天 → 块/原件 GC；待归档、批量归档、存储统计与保留设置；md / txt / docx / pptx / xlsx / 文字层 pdf 导入（docx para、pptx slide、xlsx sheet!range、pdf page anchor）；导入原件 sha256 入库；扫描件 PDF 建 pending 文档、Agent 回写后自动转 ready；WPF + BlazorWebView 查看器七屏。72 个 KB 测试 + 120 个 Planner 测试覆盖验收项。
-- **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留、笔记 30 版；`kind` 白名单；导入优先 md / txt 再 Office / PDF；查看器选项 A（内嵌 KbServer）；会议收尾聚合归 Agent/Meeting，KB 不做跨库合并；token 明文落 `%LOCALAPPDATA%` 且 ACL 仅当前用户。
-- **未做**：图片 OCR / caption 与完整派生入口（当前扫描件回写走 `kb_update` 自动转 ready）；命名修订 / 多父合并（P4-c）；Meeting 侧 `/v1/refs` 接入；向量检索（P4+）。
+- **已实现（2026-11-14，P4-a/b/e/d/c）**：七工程 + `SDemo.Kb.slnf`；不可变版本链（DAG，`kb_version_parent` 多父）+ requirement 语义版本（v1.0 起、自动 minor 或显式 v2.0）+ `kb_merge` 多父合并；内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；外部引用登记 `/v1/refs`（Planner 监听 link 变化立即登记/撤销）；per-app token 自动签发并收紧 ACL；回环写面 ingest / revise / merge / promote / retract；12 个 `kb_*` MCP 工具；写入方 outbox；staging TTL → 回收站 7 天 → 块/原件 GC；待归档、批量归档、存储统计与保留设置；md / txt / docx / pptx / xlsx / 文字层 pdf 导入（anchor）；原件 sha256 入库；扫描件 pending、Agent 回写后 ready；WPF + BlazorWebView 查看器七屏。76 个 KB 测试 + 120 个 Planner 测试覆盖验收项。
+- **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留 + 语义版本；笔记 30 版；`kind` 白名单；查看器选项 A（内嵌 KbServer）；会议收尾聚合归 Agent/Meeting，KB 不做跨库合并；token 明文落 `%LOCALAPPDATA%` 且 ACL 仅当前用户。
+- **未做**：图片 OCR / caption 与完整派生入口（当前扫描件回写走 `kb_update`）；Meeting 侧 `/v1/refs` 接入；向量检索（P4+）。
 
 ### sdemo.meeting（P6）
 
