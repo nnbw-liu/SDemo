@@ -119,7 +119,7 @@ KB 首次启动（Host 或 Viewer）给白名单 App 各签一个 token，写到
 - 文件内容是 token 明文（一行）；`sdemo.kb.json` 运行期文件里的 `tokenDirectory` 指向同一目录。
 - `SDemo.Kb.exe --tokens` 列出 `appId / 路径 / 明文`；`--issue-token <appId>` 主动轮换并覆盖文件。
 - App 从文件读取；已有且仍有效时启动不轮换，文件丢失或 DB 轮换后下次启动重新签发。
-- 安全边界：文件落 `%LOCALAPPDATA%`（默认随用户配置 ACL 隔离），不进仓、不进日志；多用户/漫游场景要显式收紧 ACL。
+- 安全边界：文件落 `%LOCALAPPDATA%`，写入时断开 ACL 继承并只授当前用户 FullControl（Windows；非 Windows 为 600），不进仓、不进日志。
 
 ## 4. 审批矩阵（跨应用统一）
 
@@ -146,6 +146,6 @@ KB 首次启动（Host 或 Viewer）给白名单 App 各签一个 token，写到
 | 发现注册表只有需求、没有 schema | Shell 与 Agent 各自理解 | P1 先出 `discovery.json` schema |
 | 没有跨应用集成测试 | 契约快照只覆盖单应用 | P3 加一条端到端：起 3 个 fake server + Agent 调通 |
 | 统一搜索的排序规则 | fan-out 结果可能乱序 | 先按时间 + 相关度，规则写进 Agent 文档 |
-| token 文件是明文，依赖 `%LOCALAPPDATA%` 的默认 ACL | 同机其它用户/进程可能读到 | 硬化阶段显式收紧 ACL；轮换时通知 App 重读 |
-| Planner 的登记延迟最多 30 秒 | 刚加的链接不会立刻出现在影响面 | 写 `link` 后主动触发一次同步；或缩短轮询 |
+| token 文件是明文 | 同用户下的其它进程仍可读 | 已收紧到当前用户 ACL；高安全场景可改成 DPAPI 加密 |
+| Planner 的登记延迟 | 刚加的链接最多延迟 30 秒 | 已加 `LinksChanged` 事件立即触发；30 秒仅兜底 |
 | Meeting 尚无 `src/` | 议题引用无法登记 | 开工时把 `mtg_topic` 的外部引用按同一契约接入 |
