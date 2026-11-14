@@ -40,7 +40,7 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | X-06 | MCP 发现注册表与 `ensure`（Agent 冷启动也能找到应用） | Shell + Agent | DA-90–92 | ✅ 需求已立 |
 | X-07 | Agent 侧 MCP client、工具预算、审批映射、断线降级 | Agent | [agent-mcp-client](../DesktopAgent/docs/architecture/agent-mcp-client.md) | ✅ v1 已实现（网关式） |
 | X-08 | 统一搜索 fan-out（一次意图并发查多个应用） | Agent | [workbench-roadmap](workbench-roadmap.md) §4.2 | ✅ 已定 |
-| X-09 | 跨应用引用解析与跳转（含 `docId@version#block`） | Agent + KB | [kb-versioning](../Apps/Kb/docs/kb-versioning.md) §引用 | ✅ 已定 |
+| X-09 | 跨应用引用解析与跳转（含 `docId@version#block`） | Agent + KB | [kb-versioning](../Kb/docs/kb-versioning.md) §引用 | ✅ 已定 |
 | X-10 | 会议候选 → planner 待办的审阅中转 | Agent + Meeting + Planner | [meeting-design](../Apps/Meeting/docs/meeting-design.md) §7 | ✅ 已定 |
 | X-11 | 风险分级与审批不可关闭项（删除/批量≥5/清空） | 全部 App | [planner-mcp-surface](../Apps/Planner/docs/planner-mcp-surface.md) §6 | ✅ 已定 |
 | X-12 | 工具面膨胀控制（同池竞争 + 应用开关 + toolHints） | Agent | [workbench-roadmap](workbench-roadmap.md) §5 | ✅ 已定 |

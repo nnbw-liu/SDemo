@@ -136,7 +136,7 @@ v1 全部铺开后，模型能看到的工具会变成：
 | --- | --- |
 | 现有内置工具包 | ~20 |
 | `sdemo.planner` MCP | 13（[清单](../Apps/Planner/docs/planner-mcp-surface.md#3-工具清单)） |
-| `sdemo.kb` MCP | 9–10（[草案](../Apps/Kb/docs/kb-versioning.md#10-mcp-工具面草案s0-补齐)） |
+| `sdemo.kb` MCP | 9–10（[草案](../Kb/docs/kb-design.md#52-mcp-工具面v1)） |
 | `sdemo.meeting` MCP | 11（[草案](../Apps/Meeting/docs/meeting-design.md#8-mcp-工具面草案)） |
 
 50+ 个工具塞给一个模型，路由准确率会明显下滑——你们现在的小模型评测（[p6-report](../DesktopAgent/docs/reports/p6-report.md)）已经证明工具数对成功率很敏感。

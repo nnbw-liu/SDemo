@@ -9,9 +9,11 @@
 | --- | --- | --- | --- | --- |
 | `agent`（DesktopAgent） | `DesktopAgent/` | ✅ 已有 | `DesktopAgent/AGENTS.md` | `dotnet build SDemo.DesktopAgent.Wpf.slnf -c Release` |
 | `shell`（DesktopAssembly） | `DesktopAssembly/` | ✅ P1 已实现并验收 | `DesktopAssembly/AGENTS.md` | `dotnet build SDemo.Shell.slnf -c Release` |
+| `kb`（sdemo.kb） | `Kb/` | 🚧 规划 | `Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
 | `planner`（sdemo.planner） | `Apps/Planner/` | ✅ P2 已验收 | `Apps/Planner/AGENTS.md` | `dotnet build SDemo.Planner.slnf -c Release` |
-| `kb`（sdemo.kb） | `Apps/Kb/` | 🚧 规划 | `Apps/Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
 | `meeting`（sdemo.meeting） | `Apps/Meeting/` | 🚧 规划 | `Apps/Meeting/AGENTS.md` | `dotnet build SDemo.Meeting.slnf -c Release` |
+
+层级：**根级**=可独立部署的进程级产品（Agent / Shell / KB）· **`Apps/`**=插件式应用 · **`Shared/`**=共享类库。KB 是数据面服务（所有应用往里写），所以不在 `Apps/` 下。
 
 `pwsh tools/ws.ps1` 列出全部；`pwsh tools/ws.ps1 agent` 看某一个（含独立 worktree 建议）。
 

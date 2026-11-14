@@ -59,13 +59,28 @@ SDemo/                              ← 主仓（git@github.com:nnbw-liu/SDemo.g
 ├─ tools/
 │  ├─ ws.ps1                        ← 列工作区、给 worktree 建议
 │  └─ check-doc-links.ps1           ← 全仓文档死链（超级仓视角）
-├─ DesktopAgent/                    ← submodule
-├─ DesktopAssembly/                 ← submodule
+├─ DesktopAgent/                    ← submodule · 智能体客户端
+├─ DesktopAssembly/                 ← submodule · 桌面外壳
+├─ Kb/                              ← submodule · 知识库（数据面服务，不在 Apps/ 下）
+├─ Shared/                          ← submodule · 共享 UI 类库（非产品）
 └─ Apps/
    ├─ Planner/                      ← submodule
-   ├─ Kb/                           ← submodule
    └─ Meeting/                      ← submodule
 ```
+
+### 3.1 层级怎么分（2026-11-14 起）
+
+KB 从 `Apps/Kb` 迁到根级 `Kb/`。判断一个仓该放哪一层，只看三件事：
+
+| 层 | 判据 | 成员 |
+| --- | --- | --- |
+| **根级** | 有独立进程、独立数据目录、要单独发版 | `DesktopAgent` `DesktopAssembly` `Kb` |
+| **`Apps/`** | 插件式应用：由宿主拉起、用户点开用、各自一摊业务数据 | `Planner` `Meeting` |
+| **`Shared/`** | 只被引用，没有进程、没有数据库 | `SDemo.UI.*` |
+
+KB 落在根级的原因：它的**写面是给所有应用用的协议**（每个 App 都要往里存东西），读面才是产品。把它摆在 `Apps/` 里，等于暗示"它和 Planner 是一类东西"，而这正是要避免的误读。
+
+> 远端仓库名仍是 `SDemo.Apps.Kb`（改名需要动 GitHub 设置，单独处理）；只有本地路径与文档层级变了。
 
 每个子仓的标准形态（以 App 为例）：
 
@@ -114,14 +129,18 @@ Apps/Planner/
 
 Why 拆开 `.Mcp`：工具面是给模型看的**对外契约**，把它和领域逻辑混在一个工程里，最后一定出现"为了工具方便改了领域模型"。物理隔离是最便宜的约束。
 
+> KB 用同一套工程模板（`Contracts/Storage/Core/Mcp/Host`），但它是**服务**不是应用：`.Host` 是常驻服务进程 + 查看器窗口，`.Mcp` 只是读面，写面另起一套回环 HTTP 端点（见 [kb-design](../Kb/docs/kb-design.md) §3）。
+
 ## 6. 依赖规则
 
 物理拆仓后，跨仓**不可能** `ProjectReference`，规则变成：
 
 1. **Agent 不依赖任何 `App.*`**：跨仓引用在编译期就失败，不需要守卫。
 2. **`App.*` 不依赖 Agent，也不依赖另一个 `App.*`**：只存 URI 字符串，跨应用动作由 Agent 经 MCP 编排。
-3. **Shell 只依赖 `Shell.Contracts`**：不认识任何具体应用。
-4. **共享代码只能来自契约包或子模块**：禁止复制源码（见 [shared.md](shared.md)）。
+3. **`App.*` 对 KB 只允许单向写**：经 ingest 协议投递内容，不读正文、不引用 KB 的工程；读正文只有 Agent（MCP）与 KB 自己的界面。
+4. **任何仓都不 `ProjectReference` KB**：KB 的对外面只有两个——回环 HTTP 写面与 MCP 读面。
+5. **Shell 只依赖 `Shell.Contracts`**：不认识任何具体应用。
+6. **共享代码只能来自契约包或子模块**：禁止复制源码（见 [shared.md](shared.md)）。
 
 仓内仍保留守卫脚本：扫描 `.csproj` 的 `ProjectReference`，命中禁止边就失败。规则清单见各仓 `AGENTS.md`。
 
@@ -144,7 +163,7 @@ Why 拆开 `.Mcp`：工具面是给模型看的**对外契约**，把它和领�
 | `DesktopAgent` | `SDemo.DesktopAgent.sln` + `SDemo.DesktopAgent.Wpf.slnf` | 现有门禁，路径不变 |
 | `DesktopAssembly` | `SDemo.Shell.slnf` | Shell 独立构建/发布 |
 | `Apps/Planner` | `SDemo.Planner.slnf` | 独立构建/发布 |
-| `Apps/Kb` / `Apps/Meeting` | `SDemo.Kb.slnf` / `SDemo.Meeting.slnf` | 同上 |
+| `Kb` / `Apps/Meeting` | `SDemo.Kb.slnf` / `SDemo.Meeting.slnf` | 同上 |
 | 主仓 | 不建 `.sln` | 需要跨仓联调时用 `dotnet build` 多项目或临时 slnx |
 
 每个 `.slnf` 必须**自包含可构建**——这是"能独立发布"的技术前提。

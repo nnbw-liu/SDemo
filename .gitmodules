@@ -10,8 +10,8 @@
 	path = Apps/Planner
 	url = git@github.com:nnbw-liu/SDemo.Apps.Planner.git
 	branch = master
-[submodule "Apps/Kb"]
-	path = Apps/Kb
+[submodule "Kb"]
+	path = Kb
 	url = git@github.com:nnbw-liu/SDemo.Apps.Kb.git
 	branch = master
 [submodule "Apps/Meeting"]

@@ -1,20 +1,21 @@
-# Apps：三个桌面应用
+# Apps：两个桌面应用
 
-> 状态：全部规划中（2026-10-31）
+> 状态：全部规划中（2026-10-31；2026-11-14 更新）
 > 每个应用一个独立子仓，各自发布；它们之间**不直连**，只通过 DesktopAgent 编排。
 
-## 三个应用
+## 两个应用
 
 | 应用 | 子仓 | 数据 | 分期 | 需求 |
 | --- | --- | --- | --- | --- |
 | `sdemo.planner`（待办 + 日历） | [`Planner/`](Planner) | `%APPDATA%\SDemo\Apps\sdemo.planner\planner.db` | P2 | [PL-01–14](../docs/sdemo-brand-blueprint.md) · [requirements](Planner/docs/requirements.md) |
-| `sdemo.kb`（知识库） | [`Kb/`](Kb) | `%APPDATA%\SDemo\Apps\sdemo.kb\kb.db` | P4 | [KB-01–13](../docs/sdemo-brand-blueprint.md) · [requirements](Kb/docs/requirements.md) |
 | `sdemo.meeting`（会议） | [`Meeting/`](Meeting) | `%APPDATA%\SDemo\Apps\sdemo.meeting\` | P6 | [MT-01–14](../docs/sdemo-brand-blueprint.md) · [requirements](Meeting/docs/requirements.md) |
+
+> `sdemo.kb` **不在这里**。它是数据面服务（所有应用往里写，读面只给 Agent 与它自己的界面），已迁到主仓根级 [`../Kb/`](../Kb)，见 [kb-design](../Kb/docs/kb-design.md)。
 
 ## 应用共有的五条
 
 1. **零模型凭证**：不引入 `IChatClient` / `ApiKey`；需要模型时经 MCP 请求 DesktopAgent。
-2. **零横向引用**：不引用其它 `App.*`，也不引用 Agent；跨应用只存 `sdemo.<app>/<entity>/<id>` 字符串。
+2. **零横向引用**：不引用其它 `App.*`，也不引用 Agent；跨应用只存 `sdemo.<app>/<entity>/<id>` 字符串。**唯一例外是对 KB 的单向写入**（ingest 投递内容），不读 KB 正文、不引用 KB 工程。
 3. **MCP 工具面**：每个应用至少一个 `*_mcp` 工程，工具声明风险等级（低/中/高），高风险不可关闭审批。
 4. **组件 + 主窗口**：组件走 [widget 契约](../docs/contracts/widget-contract.md)，主窗口由各应用自己的 Host 进程渲染。
 5. **数据目录**：`%APPDATA%\SDemo\Apps\<appId>\`；卸载不删数据；迁移用真实 EF migrations。

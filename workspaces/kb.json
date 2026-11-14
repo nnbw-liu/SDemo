@@ -2,7 +2,7 @@
   "id": "kb",
   "title": "sdemo.kb（知识库）",
   "status": "planned",
-  "repo": "Apps/Kb",
+  "repo": "Kb",
   "entry": "AGENTS.md",
   "paths": ["src", "tests"],
   "readOnlyPaths": [],

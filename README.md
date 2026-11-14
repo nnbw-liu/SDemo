@@ -9,11 +9,13 @@
 | --- | --- | --- | --- | --- |
 | **DesktopAgent**（智能体客户端） | `DesktopAgent/` · [SDemo.DesktopAgent](https://github.com/nnbw-liu/SDemo.DesktopAgent) | ✅ 已有 | [AGENTS](DesktopAgent/AGENTS.md) | `dotnet build SDemo.DesktopAgent.Wpf.slnf -c Release` |
 | **DesktopAssembly**（常驻桌面外壳） | `DesktopAssembly/` · [SDemo.DesktopAssembly](https://github.com/nnbw-liu/SDemo.DesktopAssembly) | 🚧 规划（P1） | [AGENTS](DesktopAssembly/AGENTS.md) | `dotnet build SDemo.Shell.slnf -c Release` |
+| **sdemo.kb**（知识库 · 数据面服务） | `Kb/` · [SDemo.Apps.Kb](https://github.com/nnbw-liu/SDemo.Apps.Kb) | 🚧 规划（P4） | [AGENTS](Kb/AGENTS.md) | `dotnet build SDemo.Kb.slnf -c Release` |
 | **sdemo.planner**（待办 + 日历） | `Apps/Planner/` · [SDemo.Apps.Planner](https://github.com/nnbw-liu/SDemo.Apps.Planner) | 🚧 规划（P2） | [AGENTS](Apps/Planner/AGENTS.md) | `dotnet build SDemo.Planner.slnf -c Release` |
-| **sdemo.kb**（知识库） | `Apps/Kb/` · [SDemo.Apps.Kb](https://github.com/nnbw-liu/SDemo.Apps.Kb) | 🚧 规划（P4） | [AGENTS](Apps/Kb/AGENTS.md) | `dotnet build SDemo.Kb.slnf -c Release` |
 | **sdemo.meeting**（会议） | `Apps/Meeting/` · [SDemo.Apps.Meeting](https://github.com/nnbw-liu/SDemo.Apps.Meeting) | 🚧 规划（P6） | [AGENTS](Apps/Meeting/AGENTS.md) | `dotnet build SDemo.Meeting.slnf -c Release` |
 
-三条跨产品不变式：**宿主无业务数据**、**应用零模型凭证**、**应用之间不直连**（只存 `sdemo.<app>/<entity>/<id>` URI，跨应用动作由 DesktopAgent 编排）。
+层级：**根级 = 可独立部署的进程级产品**（Agent / Shell / KB）· **`Apps/` = 插件式应用**（Planner / Meeting）· **`Shared/` = 共享类库**（非产品）。KB 是数据面服务，所有应用都往它写，但它不是应用。
+
+三条跨产品不变式：**宿主无业务数据**、**应用零模型凭证**、**应用之间不直连**（只存 `sdemo.<app>/<entity>/<id>` URI，跨应用动作由 DesktopAgent 编排；对 KB 的写入是唯一的单向例外）。
 
 ## 克隆
 
@@ -39,11 +41,12 @@ SDemo/
 │  └─ contracts/               ← 跨产品契约：widget.json、宿主控制协议
 ├─ workspaces/                 ← 工作区登记表（tools/ws.ps1 读取）
 ├─ tools/                      ← ws.ps1、check-doc-links.ps1
-├─ DesktopAgent/               ← submodule
-├─ DesktopAssembly/            ← submodule
+├─ DesktopAgent/               ← submodule · 智能体客户端
+├─ DesktopAssembly/            ← submodule · 桌面外壳
+├─ Kb/                         ← submodule · 知识库（数据面服务，不是 App）
+├─ Shared/                     ← submodule · 共享 UI 类库（非产品）
 └─ Apps/
    ├─ Planner/                 ← submodule
-   ├─ Kb/                      ← submodule
    └─ Meeting/                 ← submodule
 ```
 
@@ -66,7 +69,7 @@ SDemo/
 2. 回主仓更新指针：`git add DesktopAgent` → 提交，message 写清 pin 到哪个 sha/为什么。
 3. 只改主仓文档（`docs/`、本 README、`workspaces/`）时，不碰子模块指针。
 
-> 子仓文档里指向其它仓的链接用超级仓的相对路径（如 `../../docs/...`）。单独 clone 某个子仓时这些链接会失效，属预期；完整视图以本主仓为准。
+> 子仓文档里指向其它仓的链接用超级仓的相对路径：根级子仓（`Kb/`、`DesktopAgent/`）用 `../docs/...`，`Apps/` 下的用 `../../docs/...`。单独 clone 某个子仓时这些链接会失效，属预期；完整视图以本主仓为准。
 
 ## 当前状态（2026-10-31）
 
