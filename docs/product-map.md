@@ -69,9 +69,10 @@
 
 ### sdemo.meeting（P6）
 
-- **已定**：会议不隶属任何项目，用 `mtg_topic` 拆分议题、各自挂 URI；录音与转写全本地（whisper）；**候选 ≠ 待办**，转待办经 DesktopAgent 中转；分析存档带 `model` + `prompt_version` 可重跑；说话人 v1 手动标注 + `IDiarizationProvider` 预留自动；录音存应用数据目录但可导出。
-- **未定**：云端 ASR 作为用户显式例外是否要提供；会议类型枚举是否够用。
-- **缺口**：ASR 运行时（whisper 模型分发与校验）没有落地文档；`meeting_*` 工具面仍是草案（§8）。
+- **已定**：会议不隶属任何项目，用 `mtg_topic` 拆分议题、各自挂 URI；录音与转写全本地（**whisper 主力，Qwen3-ASR 升级档**）；**候选 ≠ 待办**，转待办经 DesktopAgent 中转；分析存档带 `model` + `prompt_version` 可重跑；说话人 v1 手动标注 + `IDiarizationProvider` 预留自动；录音存应用数据目录但可导出。
+- **已出（2026-11-15，文档与原型，`src/` 未开工）**：[asr-runtime.md](../Apps/Meeting/docs/asr-runtime.md) v0.3 —— whisper 主力 / Qwen3-ASR 升级档、S1–S5 触发 + 逐段重解的阶梯升级、`mtg_transcript_run` 表、A–F 六阶段计划（阶段 C 为升级档 go/no-go）；[asr-relay 契约](contracts/asr-relay.md) 草案（**未启用**，v1 走进程内）；[界面原型七屏](../Apps/Meeting/docs/ui-mockups/README.md)；[`tools/asr-spike`](../Apps/Meeting/tools/asr-spike/README.md)（chat-audio 两种载荷的接入验证，已自测通过）。
+- **未定**：云端 ASR 与升级档是否进 P6；会议类型枚举是否够用；「最低配置是否要求独显」已随主次翻转降级为非阻断项（探索见 asr-runtime §7）。
+- **缺口**：`mtg_topic.refs` 的 `/v1/refs` 登记未接；`meeting_*` 工具面仍是草案（§8）；阶段 A（五件套 + whisper 接通）尚未开始；KB 侧 `kb_block.origin`（跳回会议原文）待提契约。
 
 ## 4. 还缺哪几份设计文档
 
@@ -81,9 +82,8 @@
 | `calendar_*` 扩进 `planner-mcp-surface.md` | P2 / P3 | P2 中后期 | `Apps/Planner/docs/` |
 | `shared-foundation.md`（UUIDv7 / HLC / outbox / FTS 助手 / MCP 信封） | M1 | 定共享层方案时 | `docs/`（见 [shared.md](shared.md)） |
 | `sync-design.md`（op-log 格式、合并规则、冲突呈现） | P5 | P5 开工前 | `Apps/Planner/docs/` |
-| `asr-runtime.md`（whisper 模型分发、校验、耗时档位） | P6 | P6 开工前 | `Apps/Meeting/docs/` |
 
-已写齐、可直接用的：`desktop-shell` / `widget-contract` / `host-protocol` / `kb-versioning` / `meeting-design` / `repository-layout` / `agent-workspace` / `sdemo-brand-blueprint` / `workbench-roadmap`。
+已写齐、可直接用的：`desktop-shell` / `widget-contract` / `host-protocol` / `kb-versioning` / `meeting-design` / `asr-runtime`（v0.3，含开发计划）/ `agent-workspace` / `sdemo-brand-blueprint` / `workbench-roadmap`。
 
 ## 5. 分期与依赖
 

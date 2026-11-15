@@ -64,6 +64,7 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | X-16 | 软删除 + 回收站 + 审计落库 | 全部 App | 铁律 | ✅ 铁律 |
 | X-17 | 外部引用登记（Planner/Meeting → KB） | Planner + Meeting + KB | [KB `/v1/refs`](../Kb/AGENTS.md)；本文 §3.1 | ✅ KB + Planner 已接，Meeting 待开工 |
 | X-18 | 扫描件 / 图片 OCR 回写（KB pending → Agent → revise） | KB + Agent | [KB OCR](../DesktopAgent/docs/guide/kb-ocr.md)；本文 §3.3 | ✅ PDF + PNG/JPG 已接，caption 已接 |
+| X-19 | 长任务中继（转写 / 会议分析）：应用写请求 → Agent 执行 → 回写 | Meeting + Agent | [asr-relay](contracts/asr-relay.md)；[asr-runtime](../Apps/Meeting/docs/asr-runtime.md) §10 | 🔒 契约已起草，v1 不启用（本地引擎走进程内） |
 
 ## 3. 一次跨应用动作的流程（以"把会议候选转成待办"为例）
 
