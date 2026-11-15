@@ -65,7 +65,7 @@
 
 - **已实现（2026-11-15，P4-a/b/c/d/e + Agent OCR）**：七工程 + `SDemo.Kb.slnf`；不可变版本链（DAG，`kb_version_parent` 多父）+ requirement 语义版本（v1.0 起、自动 minor 或显式 v2.0、可从旧版拉分支）+ `kb_merge` 多父合并；内容寻址块 + `kb_change` 变更事实；FTS5 + 2-gram 的三索引面路由；块级 / 词级 diff；引用 `docId@v<seq>#<blockId>` + `/v1/resolve` + 影响面反查；外部引用登记 `/v1/refs`（Planner 监听 link 变化立即登记/撤销）；per-app token 自动签发并收紧 ACL；回环写面 ingest / revise / merge / promote / retract；12 个 `kb_*` MCP 工具；写入方 outbox；staging TTL → 回收站 7 天 → 块/原件 GC；待归档、批量归档、存储统计与保留设置；md / txt / docx / pptx / xlsx / 文字层 pdf / 图片导入（anchor）；原件 sha256 入库；扫描件 / 图片 pending + `/v1/derivations`，DesktopAgent 用系统 OCR 按版面拆块回写后 ready；WPF + BlazorWebView 查看器七屏。79 个 KB 测试 + 984 个 Agent Core 测试覆盖验收项。
 - **已定**：零模型凭证；块级操作、禁止整篇覆盖；引用必须带版本；requirement 全留 + 语义版本；笔记 30 版；`kind` 白名单；查看器选项 A（内嵌 KbServer）；会议收尾聚合归 Agent/Meeting，KB 不做跨库合并；token 明文落 `%LOCALAPPDATA%` 且 ACL 仅当前用户。
-- **未做**：图片 caption / 视觉模型 OCR；Meeting 侧 `/v1/refs` 接入；向量检索（P4+）。
+- **未做**：视觉模型 OCR（caption 已接）；Meeting 侧 `/v1/refs` 接入；向量检索（P4+）。
 
 ### sdemo.meeting（P6）
 
@@ -109,6 +109,7 @@ M0 基建（已做）──► M1 共享层 ──┬──► P1 Shell ──�
 | 数据写在哪、能不能备份 | 本文 §2 |
 | 组件清单长什么样、宿主怎么拉起 | [contracts/widget-contract](contracts/widget-contract.md) / [contracts/host-protocol](contracts/host-protocol.md) |
 | 某个应用的工具有哪些、谁要审批 | 各产品设计文档 + [integration](integration.md) §4 |
+
 
 
 

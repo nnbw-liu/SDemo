@@ -63,7 +63,7 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | X-15 | 宿主零业务数据（不得出现 `DbContext`/SQL） | Shell | 铁律 | ✅ 铁律 |
 | X-16 | 软删除 + 回收站 + 审计落库 | 全部 App | 铁律 | ✅ 铁律 |
 | X-17 | 外部引用登记（Planner/Meeting → KB） | Planner + Meeting + KB | [KB `/v1/refs`](../Kb/AGENTS.md)；本文 §3.1 | ✅ KB + Planner 已接，Meeting 待开工 |
-| X-18 | 扫描件 / 图片 OCR 回写（KB pending → Agent → revise） | KB + Agent | [KB OCR](../DesktopAgent/docs/guide/kb-ocr.md)；本文 §3.3 | ✅ PDF + PNG/JPG 已接，caption 待做 |
+| X-18 | 扫描件 / 图片 OCR 回写（KB pending → Agent → revise） | KB + Agent | [KB OCR](../DesktopAgent/docs/guide/kb-ocr.md)；本文 §3.3 | ✅ PDF + PNG/JPG 已接，caption 已接 |
 
 ## 3. 一次跨应用动作的流程（以"把会议候选转成待办"为例）
 
@@ -137,7 +137,7 @@ KB 自动转 ready，进入检索
 
 - Agent 不引 KB 工程，只读 `%LOCALAPPDATA%\SDemo\Hub\apps\sdemo.kb.json` 与 `tokens\sdemo.agent.token`；KB 未启动时静默跳过。
 - OCR 不调模型、不需要 Key；没有系统 OCR 语言包时明确失败，不退化成空正文。
-- 目前处理扫描 PDF 与 PNG/JPG；图片 caption / 视觉模型 OCR 仍未接。
+- 目前处理扫描 PDF 与 PNG/JPG；图片说明（caption）已接；视觉模型 OCR 仍未接。
 
 ## 4. 审批矩阵（跨应用统一）
 
@@ -167,4 +167,5 @@ KB 自动转 ready，进入检索
 | token 文件是明文 | 同用户下的其它进程仍可读 | 已收紧到当前用户 ACL；高安全场景可改成 DPAPI 加密 |
 | Planner 的登记延迟 | 刚加的链接最多延迟 30 秒 | 已加 `LinksChanged` 事件立即触发；30 秒仅兜底 |
 | Meeting 尚无 `src/` | 议题引用无法登记 | 开工时把 `mtg_topic` 的外部引用按同一契约接入 |
+
 
