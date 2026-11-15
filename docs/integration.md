@@ -63,6 +63,7 @@ DesktopAssembly（宿主：拉起进程、摆放组件、窗口管控，不存�
 | X-15 | 宿主零业务数据（不得出现 `DbContext`/SQL） | Shell | 铁律 | ✅ 铁律 |
 | X-16 | 软删除 + 回收站 + 审计落库 | 全部 App | 铁律 | ✅ 铁律 |
 | X-17 | 外部引用登记（Planner/Meeting → KB） | Planner + Meeting + KB | [KB `/v1/refs`](../Kb/AGENTS.md)；本文 §3.1 | ✅ KB + Planner 已接，Meeting 待开工 |
+| X-18 | 扫描件 OCR 回写（KB pending → Agent → revise） | KB + Agent | [KB OCR](../DesktopAgent/docs/guide/kb-ocr.md)；本文 §3.3 | ✅ PDF 已接，图片 OCR 待做 |
 
 ## 3. 一次跨应用动作的流程（以"把会议候选转成待办"为例）
 
@@ -120,6 +121,23 @@ KB 首次启动（Host 或 Viewer）给白名单 App 各签一个 token，写到
 - `SDemo.Kb.exe --tokens` 列出 `appId / 路径 / 明文`；`--issue-token <appId>` 主动轮换并覆盖文件。
 - App 从文件读取；已有且仍有效时启动不轮换，文件丢失或 DB 轮换后下次启动重新签发。
 - 安全边界：文件落 `%LOCALAPPDATA%`，写入时断开 ACL 继承并只授当前用户 FullControl（Windows；非 Windows 为 600），不进仓、不进日志。
+
+### 3.3 扫描件 OCR 回写
+
+KB 只做确定性解析；没有文字层的 PDF 导入后是 `derived_state=pending`，不进检索：
+
+```
+KB 导入扫描 PDF → pending + 占位块
+DesktopAgent 轮询 GET /v1/derivations
+  → 读 artifacts.storedPath（本机 blob）
+  → Windows.Data.Pdf 渲染 + Windows.Media.Ocr
+  → POST /v1/revise（replace 占位块 + add 后续页，anchor=page）
+KB 自动转 ready，进入检索
+```
+
+- Agent 不引 KB 工程，只读 `%LOCALAPPDATA%\SDemo\Hub\apps\sdemo.kb.json` 与 `tokens\sdemo.agent.token`；KB 未启动时静默跳过。
+- OCR 不调模型、不需要 Key；没有系统 OCR 语言包时明确失败，不退化成空正文。
+- 目前只处理 PDF；图片 OCR / caption 仍未接。
 
 ## 4. 审批矩阵（跨应用统一）
 
