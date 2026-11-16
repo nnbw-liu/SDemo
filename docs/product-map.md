@@ -69,7 +69,7 @@
 
 ### sdemo.meeting（P6）
 
-- **已实现（2026-11-16，阶段 A + B + 领域模型 + MCP 读写面）**：10 个工程 + `SDemo.Meeting.slnf`；**schema v3**（会议/音频/run/段/元数据 + 议题/决议/候选 + `mtg_audit`，老库就地迁移）；whisper large-v3-turbo 经 Whisper.net 接通；VAD 分段（窗口打包）+ 增量落库/取消/续转；模型库；低配档自动回落；hotwords / 语言 hint / 质检告警；**主程序 P0**（`SDemo.Meeting.exe` = WPF + BlazorWebView + 进程内 MCP 单进程，双模入口，单实例，`deploy/app.json`）；**回环 MCP 服务**（7 读 + 6 写，写工具 medium/once 且每次落审计）。103 个测试。A5 双轨采集待有麦克风权限的机器复验。
+- **已实现（2026-11-16，阶段 A + B + 领域模型 + MCP 读写面）**：10 个工程 + `SDemo.Meeting.slnf`；**schema v3**（会议/音频/run/段/元数据 + 议题/决议/候选 + `mtg_audit`，老库就地迁移）；whisper large-v3-turbo 经 Whisper.net 接通；VAD 分段（窗口打包）+ 增量落库/取消/续转；模型库；低配档自动回落；hotwords / 语言 hint / 质检告警；**主程序 P0**（`SDemo.Meeting.exe` = WPF + BlazorWebView + 进程内 MCP 单进程，双模入口，单实例，`deploy/app.json`）+ **P1 录音卡**（开始/计时/停止自动转写/进度/取消，双轨开关）；**回环 MCP 服务**（7 读 + 6 写，写工具 medium/once 且每次落审计）。112 个测试。A5 双轨采集与 P1 真机录音待有麦克风权限的机器复验。
 - **已定**：会议不隶属任何项目，用 `mtg_topic` 拆分议题、各自挂 URI；录音与转写全本地（**whisper 主力，Qwen3-ASR 升级档**）；**候选 ≠ 待办**，转待办经 DesktopAgent 中转；分析存档带 `model` + `prompt_version` 可重跑；说话人 v1 手动标注 + `IDiarizationProvider` 预留自动；录音存应用数据目录但可导出。
 - **已出（文档与原型）**：[asr-runtime.md](../Apps/Meeting/docs/asr-runtime.md) v0.4（含真机性能表：whisper turbo 纯 CPU RTF≈0.65，Qwen3-0.6B RTF≈0.20）；[asr-relay 契约](contracts/asr-relay.md) 草案（**未启用**）；[界面原型七屏](../Apps/Meeting/docs/ui-mockups/README.md)；[`tools/asr-spike`](../Apps/Meeting/tools/asr-spike/README.md)。
 - **未定**：云端 ASR 与升级档是否进 P6；**主力档是否该从 whisper 换成 Qwen3-0.6B**（实测快 3 倍且字错更少，已记入 asr-runtime §7.2 待阶段 B 末尾复核）；会议类型枚举是否够用。
