@@ -69,10 +69,11 @@
 
 ### sdemo.meeting（P6）
 
+- **已实现（2026-11-16，阶段 A）**：8 个工程 + `SDemo.Meeting.slnf`（Contracts / Storage / Core / Asr / Audio / Mcp / Host / Tests）；schema v1（`mtg_meeting` / `mtg_audio_asset` / `mtg_transcript_run` / `mtg_segment` / `mtg_meta`，`current_run_id` 切当前转写）；whisper large-v3-turbo 经 Whisper.net 接通，真机 27 秒中文 → 9 段带时间戳并落库；CLI `record / import / transcribe / list / show / models / doctor`；29 个测试（含真实模型集成测试）。A5 双轨采集代码完成但本机被 Windows 麦克风隐私拒绝（0x80070005），待有权限机器复验。
 - **已定**：会议不隶属任何项目，用 `mtg_topic` 拆分议题、各自挂 URI；录音与转写全本地（**whisper 主力，Qwen3-ASR 升级档**）；**候选 ≠ 待办**，转待办经 DesktopAgent 中转；分析存档带 `model` + `prompt_version` 可重跑；说话人 v1 手动标注 + `IDiarizationProvider` 预留自动；录音存应用数据目录但可导出。
-- **已出（2026-11-15，文档与原型，`src/` 未开工）**：[asr-runtime.md](../Apps/Meeting/docs/asr-runtime.md) v0.3 —— whisper 主力 / Qwen3-ASR 升级档、S1–S5 触发 + 逐段重解的阶梯升级、`mtg_transcript_run` 表、A–F 六阶段计划（阶段 C 为升级档 go/no-go）；[asr-relay 契约](contracts/asr-relay.md) 草案（**未启用**，v1 走进程内）；[界面原型七屏](../Apps/Meeting/docs/ui-mockups/README.md)；[`tools/asr-spike`](../Apps/Meeting/tools/asr-spike/README.md)（chat-audio 两种载荷的接入验证，已自测通过）。
-- **未定**：云端 ASR 与升级档是否进 P6；会议类型枚举是否够用；「最低配置是否要求独显」已随主次翻转降级为非阻断项（探索见 asr-runtime §7）。
-- **缺口**：`mtg_topic.refs` 的 `/v1/refs` 登记未接；`meeting_*` 工具面仍是草案（§8）；阶段 A（五件套 + whisper 接通）尚未开始；KB 侧 `kb_block.origin`（跳回会议原文）待提契约。
+- **已出（文档与原型）**：[asr-runtime.md](../Apps/Meeting/docs/asr-runtime.md) v0.4（含真机性能表：whisper turbo 纯 CPU RTF≈0.65，Qwen3-0.6B RTF≈0.20）；[asr-relay 契约](contracts/asr-relay.md) 草案（**未启用**）；[界面原型七屏](../Apps/Meeting/docs/ui-mockups/README.md)；[`tools/asr-spike`](../Apps/Meeting/tools/asr-spike/README.md)。
+- **未定**：云端 ASR 与升级档是否进 P6；**主力档是否该从 whisper 换成 Qwen3-0.6B**（实测快 3 倍且字错更少，已记入 asr-runtime §7.2 待阶段 B 末尾复核）；会议类型枚举是否够用。
+- **缺口**：WPF 界面与 MCP server 未接（工具目录已就位）；`mtg_topic` / `mtg_decision` / `mtg_action` 表未建（议题模型是阶段 B 之后）；`/v1/refs` 登记未接；KB 侧 `kb_block.origin`（跳回会议原文）待提契约。
 
 ## 4. 还缺哪几份设计文档
 

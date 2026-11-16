@@ -11,7 +11,7 @@
 | `shell`（DesktopAssembly） | `DesktopAssembly/` | ✅ P1 已实现并验收 | `DesktopAssembly/AGENTS.md` | `dotnet build SDemo.Shell.slnf -c Release` |
 | `kb`（sdemo.kb） | `Kb/` | ✅ P4-a/b/c/d/e + refs/token + Agent OCR | `Kb/AGENTS.md` | `dotnet build SDemo.Kb.slnf -c Release` |
 | `planner`（sdemo.planner） | `Apps/Planner/` | ✅ P2 已验收 | `Apps/Planner/AGENTS.md` | `dotnet build SDemo.Planner.slnf -c Release` |
-| `meeting`（sdemo.meeting） | `Apps/Meeting/` | 🚧 规划 | `Apps/Meeting/AGENTS.md` | `dotnet build SDemo.Meeting.slnf -c Release` |
+| `meeting`（sdemo.meeting） | `Apps/Meeting/` | ✅ P6 阶段 A（录转存闭环） | `Apps/Meeting/AGENTS.md` | `dotnet build SDemo.Meeting.slnf -c Release` |
 
 层级：**根级**=可独立部署的进程级产品（Agent / Shell / KB）· **`Apps/`**=插件式应用 · **`Shared/`**=共享类库。KB 是数据面服务（所有应用往里写），所以不在 `Apps/` 下。
 
