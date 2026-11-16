@@ -3,6 +3,7 @@
 > 状态：索引文档，2026-10-31（多仓化之后更新）
 > 用途：回答"这个产品的代码在哪、数据存哪、文档在哪、什么时候做"。
 > 关联：[品牌蓝图与需求](sdemo-brand-blueprint.md) · [多仓布局](repository-layout.md) · [工作台规划](workbench-roadmap.md) · [跨产品联动](integration.md)
+> 进度快照：[2026-11-16 · 会议](progress-2026-11-16-meeting.md)（按日期留档，长期事实以本表为准）
 
 ---
 
