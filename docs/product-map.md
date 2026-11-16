@@ -69,11 +69,11 @@
 
 ### sdemo.meeting（P6）
 
-- **已实现（2026-11-16，阶段 A + B + MCP）**：10 个工程 + `SDemo.Meeting.slnf`（Contracts / Storage / Core / Asr / Audio / Mcp / Web / Viewer / Host / Tests）；schema v1（`mtg_meeting` / `mtg_audio_asset` / `mtg_transcript_run` / `mtg_segment` / `mtg_meta`）；whisper large-v3-turbo 经 Whisper.net 接通；VAD 分段（窗口打包）+ 增量落库/取消/续转；模型库（安装包打包 + 用户导入 + sha256 + 清理）；低配档自动回落；hotwords / 语言 hint / 质检告警；结果页（WPF + BlazorWebView）；**回环 MCP 服务**（4 个只读工具，Bearer token，runtime 文件含 `mcp.path`）。81 个测试。A5 双轨采集待有麦克风权限的机器复验。
+- **已实现（2026-11-16，阶段 A + B + 领域模型 + MCP 读面）**：10 个工程 + `SDemo.Meeting.slnf`；**schema v2**（会议/音频/run/段/元数据 + `mtg_topic` / `mtg_decision` / `mtg_action`，老库就地迁移）；whisper large-v3-turbo 经 Whisper.net 接通；VAD 分段（窗口打包）+ 增量落库/取消/续转；模型库（安装包打包 + 用户导入 + sha256 + 清理）；低配档自动回落；hotwords / 语言 hint / 质检告警；结果页（WPF + BlazorWebView）；**回环 MCP 服务**（7 个只读工具，含 topics/decisions/actions，Bearer token）。97 个测试。A5 双轨采集待有麦克风权限的机器复验。
 - **已定**：会议不隶属任何项目，用 `mtg_topic` 拆分议题、各自挂 URI；录音与转写全本地（**whisper 主力，Qwen3-ASR 升级档**）；**候选 ≠ 待办**，转待办经 DesktopAgent 中转；分析存档带 `model` + `prompt_version` 可重跑；说话人 v1 手动标注 + `IDiarizationProvider` 预留自动；录音存应用数据目录但可导出。
 - **已出（文档与原型）**：[asr-runtime.md](../Apps/Meeting/docs/asr-runtime.md) v0.4（含真机性能表：whisper turbo 纯 CPU RTF≈0.65，Qwen3-0.6B RTF≈0.20）；[asr-relay 契约](contracts/asr-relay.md) 草案（**未启用**）；[界面原型七屏](../Apps/Meeting/docs/ui-mockups/README.md)；[`tools/asr-spike`](../Apps/Meeting/tools/asr-spike/README.md)。
 - **未定**：云端 ASR 与升级档是否进 P6；**主力档是否该从 whisper 换成 Qwen3-0.6B**（实测快 3 倍且字错更少，已记入 asr-runtime §7.2 待阶段 B 末尾复核）；会议类型枚举是否够用。
-- **缺口**：MCP 写工具（标说话人 / 建会议 / 触发转写）未开（等审计与审批）；`mtg_topic` / `mtg_decision` / `mtg_action` 表未建（议题模型是下一步）；会议分析交给 Agent 的批处理链路未接；`/v1/refs` 登记未接；KB 侧 `kb_block.origin`（跳回会议原文）待提契约。
+- **缺口**：MCP 写工具未开（标说话人 / 建议题 / 确认决议 / 回写 plannerRef，等审计与审批）；会议分析交给 Agent 的批处理链路未接；KB 投影（`/v1/ingest` + `promote`）未接；`/v1/refs` 登记未接；KB 侧 `kb_block.origin`（跳回会议原文）待提契约。
 
 ## 4. 还缺哪几份设计文档
 
